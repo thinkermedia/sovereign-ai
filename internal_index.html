@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>TMG Fieldwork Console</title>
+<style>
+:root{--navy:#0b1f3a;--blue:#1f5fbf;--bg:#f4f6fa;--card:#fff;--line:#d8dee9;--text:#14213a;--mute:#5b6b85;--ok:#1a7f4b;--bad:#b3261e;--warn:#a86a00}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;background:var(--bg);color:var(--text)}
+header{background:var(--navy);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+header h1{font-size:16px;margin:0;flex:1}
+nav{display:flex;gap:4px;flex-wrap:wrap;padding:10px 20px 0}
+nav button{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:6px 6px 0 0;cursor:pointer;font-size:13px;color:var(--text)}
+nav button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+main{padding:16px 20px 40px;max-width:1200px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:16px}
+.card h2{margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
+.kpi b{display:block;font-size:26px}.kpi span{color:var(--mute);font-size:12px}
+.cols{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.bar{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:12px}
+.bar i{display:block;height:14px;background:var(--blue);border-radius:3px;min-width:2px}
+.bar em{font-style:normal;width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th{background:var(--navy);color:#fff;text-align:left;padding:6px 8px;position:sticky;top:0}
+td{border-bottom:1px solid var(--line);padding:6px 8px;word-wrap:break-word;max-width:260px}
+.scroll{max-height:380px;overflow:auto}
+button.p,button.s{padding:8px 14px;border-radius:6px;border:1px solid var(--blue);cursor:pointer;font-size:13px}
+button.p{background:var(--blue);color:#fff}button.s{background:#fff;color:var(--blue)}
+button:disabled{opacity:.5;cursor:default}
+input,select{padding:8px;border:1px solid var(--line);border-radius:6px;font-size:13px;background:#fff;color:var(--text)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.msg{margin-top:8px;font-size:13px}.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.login{max-width:340px;margin:80px auto}.login input{width:100%;margin-bottom:10px}
+.hide{display:none}
+.mute{color:var(--mute);font-size:12px}
+</style>
+</head>
+<body>
+<div id="login" class="card login hide">
+  <h2>Fieldwork Console</h2>
+  <input id="em" type="email" placeholder="Email" autocomplete="username">
+  <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="p" id="go" style="width:100%">Sign in</button>
+  <div id="lmsg" class="msg bad"></div>
+</div>
+
+<div id="app" class="hide">
+<header><h1>Fieldwork Console</h1><span id="upd" class="mute" style="color:#b8c4dc"></span><button class="s" id="out">Sign out</button></header>
+<nav id="tabs"></nav>
+<main>
+ <section id="t-dash"></section>
+ <section id="t-qc" class="hide"></section>
+ <section id="t-imp" class="hide"></section>
+ <section id="t-cli" class="hide"></section>
+ <section id="t-exp" class="hide"></section>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = "https://zgblrofsuwqekoygdsgf.supabase.co";
+const SUPABASE_KEY = "sb_publishable_MUW3CI04Uot69ZG_H_aKzg_sK2idcb9";
+const POLL_MS = 45000;
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+function el(tag, text, cls){const e=document.createElement(tag); if(text!=null)e.textContent=text; if(cls)e.className=cls; return e;}
+function setMsg(node, text, cls){node.textContent=text; node.className='msg '+(cls||'');}
+
+/* ---------- CSV ---------- */
+function parseCSV(text){
+  text=text.replace(/^﻿/,''); const rows=[]; let row=[],f='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i++;} else q=false; } else f+=c; }
+    else if(c==='"') q=true;
+    else if(c===','){row.push(f);f='';}
+    else if(c==='\n'||c==='\r'){ if(c==='\r'&&text[i+1]==='\n')i++; row.push(f);f=''; if(row.some(x=>x!==''))rows.push(row); row=[]; }
+    else f+=c; }
+  row.push(f); if(row.some(x=>x!==''))rows.push(row);
+  if(!rows.length) return [];
+  const h=rows[0].map(x=>x.trim());
+  return rows.slice(1).map(r=>{const o={}; h.forEach((k,i)=>{o[k]=(r[i]??'').trim();}); return o;});
+}
+function toCSV(rows){
+  const cols=[]; const seen=new Set();
+  rows.forEach(r=>Object.keys(r).forEach(k=>{if(!seen.has(k)){seen.add(k);cols.push(k);}}));
+  const esc=v=>{ if(v==null)return ''; if(Array.isArray(v))v=v.join('|'); else if(typeof v==='object')v=JSON.stringify(v); v=String(v); return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; };
+  return '﻿'+[cols.map(esc).join(',')].concat(rows.map(r=>cols.map(c=>esc(r[c])).join(','))).join('\r\n');
+}
+function download(name, text){const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'})); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);}
+const readFile = f => new Promise((res,rej)=>{const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsText(f);});
+
+/* ---------- auth ---------- */
+async function boot(){
+  const {data}=await sb.auth.getSession();
+  if(data.session) await enter(); else show(false);
+}
+function show(on){ $('login').classList.toggle('hide',on); $('app').classList.toggle('hide',!on); }
+$('go').onclick=async()=>{
+  setMsg($('lmsg'),'');
+  const {error}=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});
+  if(error) return setMsg($('lmsg'),error.message,'bad');
+  await enter();
+};
+$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click();});
+$('out').onclick=async()=>{await sb.auth.signOut(); clearInterval(timer); show(false);};
+let timer=null, started=false;
+async function enter(){
+  const {error}=await sb.rpc('internal_stats');
+  if(error){ await sb.auth.signOut(); show(false); return setMsg($('lmsg'),'This login is not authorised for the console.','bad'); }
+  show(true);
+  if(!started){ started=true; buildTabs(); buildDash(); buildQC(); buildImp(); buildCli(); buildExp(); }
+  refresh(); clearInterval(timer); timer=setInterval(()=>{ if(active==='dash') refresh(); },POLL_MS);
+}
+
+/* ---------- tabs ---------- */
+let active='dash';
+const TABS=[['dash','Dashboard'],['qc','QC'],['imp','Import'],['cli','Client sheet'],['exp','Export']];
+function buildTabs(){
+  const n=$('tabs'); n.textContent='';
+  TABS.forEach(([k,l])=>{const b=el('button',l); b.dataset.k=k; b.onclick=()=>go(k); n.appendChild(b);});
+  go('dash');
+}
+function go(k){
+  active=k;
+  TABS.forEach(([t])=>$('t-'+t).classList.toggle('hide',t!==k));
+  [...$('tabs').children].forEach(b=>b.classList.toggle('on',b.dataset.k===k));
+  if(k==='dash')refresh(); if(k==='qc')loadFlagged(); if(k==='cli')loadDaily();
+}
+
+/* ---------- dashboard ---------- */
+function buildDash(){
+  const s=$('t-dash'); s.textContent='';
+  const g=el('div',null,'grid'); g.id='kpis'; s.appendChild(g);
+  const c=el('div',null,'cols'); c.style.marginTop='16px';
+  [['by_source','Completes by source'],['by_country','Completes by country'],['daily','Completes by day'],['dropoff','Drop-off: last question reached (incompletes)']]
+   .forEach(([k,t])=>{const d=el('div',null,'card'); d.appendChild(el('h2',t)); const b=el('div'); b.id='b-'+k; d.appendChild(b); c.appendChild(d);});
+  s.appendChild(c);
+}
+function bars(id, arr){
+  const box=$(id); box.textContent='';
+  if(!arr||!arr.length){box.appendChild(el('div','No data yet','mute'));return;}
+  const max=Math.max(...arr.map(x=>x.n));
+  arr.forEach(x=>{const r=el('div',null,'bar'); r.appendChild(el('em',String(x.k))); const i=el('i'); i.style.width=Math.max(2,(x.n/max)*60)+'%'; r.appendChild(i); r.appendChild(el('span',String(x.n))); box.appendChild(r);});
+}
+async function refresh(){
+  const {data,error}=await sb.rpc('internal_stats');
+  if(error) return;
+  const k=$('kpis'); k.textContent='';
+  const qc=data.qc||{};
+  [['Completes',data.complete],['QC pass',qc.pass||0],['QC flagged',qc.flagged||0],['QC pending',qc.pending||0],['Removed',qc.removed||0],['Terminated',data.terminated],['Over quota',data.overquota],['Incompletes',data.incomplete]]
+   .forEach(([l,v])=>{const d=el('div',null,'kpi'); d.appendChild(el('b',String(v))); d.appendChild(el('span',l)); k.appendChild(d);});
+  ['by_source','by_country','daily','dropoff'].forEach(x=>bars('b-'+x,data[x]));
+  $('upd').textContent='Updated '+new Date().toLocaleTimeString();
+}
+
+/* ---------- QC ---------- */
+function buildQC(){
+  const s=$('t-qc'); s.textContent='';
+  const c=el('div',null,'card'); c.appendChild(el('h2','Quality control'));
+  const r=el('div',null,'row');
+  const sp=el('input'); sp.id='spd'; sp.type='number'; sp.step='0.05'; sp.value='0.4'; sp.style.width='80px';
+  r.appendChild(el('span','Speeder cut-off (fraction of median duration)'));
+  r.appendChild(sp);
+  const b=el('button','Run QC','p'); b.onclick=async()=>{
+    const {data,error}=await sb.rpc('qc_run',{p_speed_pct:parseFloat(sp.value)||0.4});
+    setMsg($('qcmsg'),error?error.message:`Done. Median ${Math.round(data.median_sec||0)}s, flagged ${data.flagged}, pass ${data.pass}.`,error?'bad':'ok');
+    loadFlagged();
+  };
+  r.appendChild(b); c.appendChild(r);
+  const m=el('div',null,'msg'); m.id='qcmsg'; c.appendChild(m);
+  c.appendChild(el('div','Checks now: speeders, duplicate email, IP and company across all sources. Straightlining is added once the codebook is final.','mute'));
+  s.appendChild(c);
+  const f=el('div',null,'card'); f.appendChild(el('h2','Flagged completes (latest 200)'));
+  const w=el('div',null,'scroll'); w.id='flagged'; f.appendChild(w); s.appendChild(f);
+}
+async function loadFlagged(){
+  const {data,error}=await sb.from('responses').select('resp_id,source,ext_id,country,duration_sec,qc_flags,qc_status').eq('qc_status','flagged').order('created_at',{ascending:false}).limit(200);
+  const w=$('flagged'); w.textContent='';
+  if(error) return w.appendChild(el('div',error.message,'bad'));
+  if(!data.length) return w.appendChild(el('div','Nothing flagged','mute'));
+  const t=el('table'); const h=el('tr'); ['Resp','Source','Ext ID','Country','Sec','Flags',''].forEach(x=>h.appendChild(el('th',x))); t.appendChild(h);
+  data.forEach(r=>{const tr=el('tr');
+    [r.resp_id.slice(0,8),r.source,r.ext_id||'',r.country||'',r.duration_sec??'',(r.qc_flags||[]).join(', ')].forEach(v=>tr.appendChild(el('td',String(v))));
+    const td=el('td');
+    const rm=el('button','Remove','s'); rm.onclick=()=>setQC(r.resp_id,'removed');
+    const ok=el('button','Clear','s'); ok.style.marginLeft='4px'; ok.onclick=()=>setQC(r.resp_id,'pass');
+    td.appendChild(rm); td.appendChild(ok); tr.appendChild(td); t.appendChild(tr);});
+  w.appendChild(t);
+}
+async function setQC(id,status){ await sb.from('responses').update({qc_status:status}).eq('resp_id',id); loadFlagged(); }
+
+/* ---------- import ---------- */
+let batch=null;
+function buildImp(){
+  const s=$('t-imp'); s.textContent='';
+  const c=el('div',null,'card'); c.appendChild(el('h2','Import external file to staging'));
+  const r=el('div',null,'row');
+  const src=el('select'); src.id='isrc'; [['panel_a','Panel A'],['panel_b','Panel B'],['direct','Direct']].forEach(([v,l])=>{const o=el('option',l); o.value=v; src.appendChild(o);});
+  const f=el('input'); f.type='file'; f.accept='.csv'; f.id='ifile';
+  const b=el('button','Upload and validate','p'); b.id='iup';
+  r.appendChild(src); r.appendChild(f); r.appendChild(b); c.appendChild(r);
+  c.appendChild(el('div','CSV needs an ext_id column (vendor ID). Optional core columns: country, is_csuite, is_binf, duration_sec, email, ip, company. All other columns go into the answers. Files are remapped to codebook codes once the codebook is final.','mute'));
+  const m=el('div',null,'msg'); m.id='imsg'; c.appendChild(m);
+  const pr=el('div',null,'row'); pr.id='iprom'; pr.classList.add('hide');
+  const pb=el('button','Promote valid rows to master','p'); pb.id='ipb'; pr.appendChild(pb); c.appendChild(pr);
+  s.appendChild(c);
+  const rj=el('div',null,'card hide'); rj.id='irej'; rj.appendChild(el('h2','Rejected rows')); const w=el('div',null,'scroll'); w.id='irejw'; rj.appendChild(w); s.appendChild(rj);
+
+  b.onclick=async()=>{
+    const file=f.files[0]; if(!file) return setMsg(m,'Choose a CSV first','bad');
+    b.disabled=true; setMsg(m,'Reading file...');
+    try{
+      const rows=parseCSV(await readFile(file));
+      if(!rows.length) throw new Error('No rows found');
+      if(!('ext_id' in rows[0])) throw new Error('Column ext_id is missing');
+      batch=crypto.randomUUID();
+      const recs=rows.map(o=>({batch_id:batch,source:src.value,ext_id:o.ext_id||null,raw:o}));
+      for(let i=0;i<recs.length;i+=500){
+        setMsg(m,`Uploading ${Math.min(i+500,recs.length)} of ${recs.length}...`);
+        const {error}=await sb.from('staging').insert(recs.slice(i,i+500));
+        if(error) throw error;
+      }
+      const {data,error}=await sb.rpc('validate_staging',{p_batch:batch}); if(error) throw error;
+      setMsg(m,`Batch ${batch.slice(0,8)}: ${data.valid} valid, ${data.rejected} rejected.`,data.rejected?'warn':'ok');
+      pr.classList.toggle('hide',!data.valid); showRejected();
+    }catch(e){ setMsg(m,e.message||String(e),'bad'); }
+    b.disabled=false;
+  };
+  pb.onclick=async()=>{
+    if(!batch) return; pb.disabled=true;
+    const {data,error}=await sb.rpc('promote_staging',{p_batch:batch});
+    setMsg(m,error?error.message:`Promoted ${data} rows to master.`,error?'bad':'ok');
+    if(!error) pr.classList.add('hide'); pb.disabled=false;
+  };
+}
+async function showRejected(){
+  const {data}=await sb.from('staging').select('ext_id,source,reject_reason').eq('batch_id',batch).eq('status','rejected').limit(500);
+  const box=$('irej'), w=$('irejw'); w.textContent=''; box.classList.toggle('hide',!(data&&data.length));
+  if(!data||!data.length) return;
+  const t=el('table'); const h=el('tr'); ['Ext ID','Source','Reason'].forEach(x=>h.appendChild(el('th',x))); t.appendChild(h);
+  data.forEach(r=>{const tr=el('tr'); [r.ext_id||'',r.source,r.reject_reason||''].forEach(v=>tr.appendChild(el('td',v))); t.appendChild(tr);});
+  w.appendChild(t);
+}
+
+/* ---------- client daily sheet ---------- */
+function buildCli(){
+  const s=$('t-cli'); s.textContent='';
+  const c=el('div',null,'card'); c.appendChild(el('h2','End-of-day client sheet (post-QC completes)'));
+  const r=el('div',null,'row');
+  const cc=el('select'); cc.id='ccode'; const f=el('input'); f.type='file'; f.accept='.csv'; f.id='cfile';
+  const b=el('button','Upload to client portal','p');
+  r.appendChild(cc); r.appendChild(f); r.appendChild(b); c.appendChild(r);
+  c.appendChild(el('div','CSV columns: report_date (YYYY-MM-DD), qc_completes, quota_cell (optional). Re-uploading the same date and cell replaces the number. The client sees only this sheet.','mute'));
+  const m=el('div',null,'msg'); m.id='cmsg'; c.appendChild(m); s.appendChild(c);
+  const l=el('div',null,'card'); l.appendChild(el('h2','Latest uploaded rows')); const w=el('div',null,'scroll'); w.id='cdaily'; l.appendChild(w); s.appendChild(l);
+  b.onclick=async()=>{
+    const file=f.files[0]; if(!file) return setMsg(m,'Choose a CSV first','bad');
+    try{
+      const rows=parseCSV(await readFile(file)); if(!rows.length) throw new Error('No rows found');
+      const recs=rows.map((o,i)=>{
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(o.report_date||'')) throw new Error(`Row ${i+2}: report_date must be YYYY-MM-DD`);
+        if(!/^\d+$/.test(o.qc_completes||'')) throw new Error(`Row ${i+2}: qc_completes must be a whole number`);
+        return {client_code:cc.value,report_date:o.report_date,quota_cell:o.quota_cell||'',qc_completes:parseInt(o.qc_completes,10)};
+      });
+      const {error}=await sb.from('client_daily_counts').upsert(recs,{onConflict:'client_code,report_date,quota_cell'});
+      if(error) throw error; setMsg(m,`Uploaded ${recs.length} rows.`,'ok'); loadDaily();
+    }catch(e){ setMsg(m,e.message||String(e),'bad'); }
+  };
+}
+async function loadDaily(){
+  const cc=$('ccode');
+  if(!cc.children.length){ const {data}=await sb.from('client_targets').select('client_code'); (data||[]).forEach(x=>{const o=el('option',x.client_code); o.value=x.client_code; cc.appendChild(o);}); }
+  const {data}=await sb.from('client_daily_counts').select('client_code,report_date,quota_cell,qc_completes').order('report_date',{ascending:false}).limit(100);
+  const w=$('cdaily'); w.textContent=''; if(!data||!data.length) return w.appendChild(el('div','Nothing uploaded yet','mute'));
+  const t=el('table'); const h=el('tr'); ['Client','Date','Cell','QC completes'].forEach(x=>h.appendChild(el('th',x))); t.appendChild(h);
+  data.forEach(r=>{const tr=el('tr'); [r.client_code,r.report_date,r.quota_cell,r.qc_completes].forEach(v=>tr.appendChild(el('td',String(v)))); t.appendChild(tr);});
+  w.appendChild(t);
+}
+
+/* ---------- export ---------- */
+function buildExp(){
+  const s=$('t-exp'); s.textContent='';
+  const c=el('div',null,'card'); c.appendChild(el('h2','Download data extract'));
+  c.appendChild(el('div','Wide format, one row per respondent, all sources pooled.','mute'));
+  const r=el('div',null,'row'); r.style.marginTop='10px';
+  const sel=el('select'); sel.id='estat'; [['all','All rows'],['complete','Completes only'],['pass','Completes, QC pass only']].forEach(([v,l])=>{const o=el('option',l); o.value=v; sel.appendChild(o);});
+  const b=el('button','Download CSV','p'); r.appendChild(sel); r.appendChild(b); c.appendChild(r);
+  const m=el('div',null,'msg'); c.appendChild(m); s.appendChild(c);
+  b.onclick=async()=>{
+    b.disabled=true; const all=[]; const L=1000;
+    try{
+      for(let o=0;;o+=L){
+        setMsg(m,`Fetching ${all.length} rows...`);
+        const {data,error}=await sb.rpc('export_wide',{p_offset:o,p_limit:L}); if(error) throw error;
+        all.push(...data); if(data.length<L) break;
+      }
+      let rows=all;
+      if(sel.value==='complete') rows=all.filter(r=>r.status==='complete');
+      if(sel.value==='pass') rows=all.filter(r=>r.status==='complete'&&r.qc_status==='pass');
+      download(`responses_${new Date().toISOString().slice(0,10)}.csv`,toCSV(rows));
+      setMsg(m,`Downloaded ${rows.length} rows.`,'ok');
+    }catch(e){ setMsg(m,e.message||String(e),'bad'); }
+    b.disabled=false;
+  };
+}
+boot();
+</script>
+</body>
+</html>

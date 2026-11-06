@@ -3,311 +3,426 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
-<title>TMG Fieldwork Console</title>
+<meta name="robots" content="noindex, nofollow">
+<title>Research Survey</title>
 <style>
-:root{--navy:#0b1f3a;--blue:#1f5fbf;--bg:#f4f6fa;--card:#fff;--line:#d8dee9;--text:#14213a;--mute:#5b6b85;--ok:#1a7f4b;--bad:#b3261e;--warn:#a86a00}
+:root{--navy:#0b1f3a;--blue:#1f5fbf;--blue2:#e8f0fc;--gold:#b8892b;--bg:#f4f6fa;--line:#d4dbe8;--text:#14213a;--mute:#5b6b85;--bad:#b3261e}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;background:var(--bg);color:var(--text)}
-header{background:var(--navy);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-header h1{font-size:16px;margin:0;flex:1}
-nav{display:flex;gap:4px;flex-wrap:wrap;padding:10px 20px 0}
-nav button{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:6px 6px 0 0;cursor:pointer;font-size:13px;color:var(--text)}
-nav button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
-main{padding:16px 20px 40px;max-width:1200px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:16px}
-.card h2{margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}
-.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
-.kpi b{display:block;font-size:26px}.kpi span{color:var(--mute);font-size:12px}
-.cols{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
-.bar{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:12px}
-.bar i{display:block;height:14px;background:var(--blue);border-radius:3px;min-width:2px}
-.bar em{font-style:normal;width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-table{border-collapse:collapse;width:100%;font-size:12px}
-th{background:var(--navy);color:#fff;text-align:left;padding:6px 8px;position:sticky;top:0}
-td{border-bottom:1px solid var(--line);padding:6px 8px;word-wrap:break-word;max-width:260px}
-.scroll{max-height:380px;overflow:auto}
-button.p,button.s{padding:8px 14px;border-radius:6px;border:1px solid var(--blue);cursor:pointer;font-size:13px}
-button.p{background:var(--blue);color:#fff}button.s{background:#fff;color:var(--blue)}
-button:disabled{opacity:.5;cursor:default}
-input,select{padding:8px;border:1px solid var(--line);border-radius:6px;font-size:13px;background:#fff;color:var(--text)}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
-.msg{margin-top:8px;font-size:13px}.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
-.login{max-width:340px;margin:80px auto}.login input{width:100%;margin-bottom:10px}
-.hide{display:none}
-.mute{color:var(--mute);font-size:12px}
+html,body{margin:0}
+body{font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.45;background:var(--bg);color:var(--text)}
+header.top{background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;gap:10px}
+header.top .brand{font-weight:bold;color:var(--navy);letter-spacing:.02em}
+header.top .brand b{color:var(--gold)}
+.bar{height:4px;background:#e3e9f4}.bar i{display:block;height:100%;width:0;background:var(--blue);transition:width .25s}
+.pv{background:#fff4d6;color:#6b4a00;text-align:center;font-size:13px;padding:6px 10px;border-bottom:1px solid #ecd9a3}
+main{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px 20px}
+.pre{color:var(--mute);margin:0 0 14px}
+.stem{font-size:18px;line-height:1.4;margin:0 0 12px;font-weight:bold}
+.sub{margin:6px 0 2px;font-weight:bold}
+.defn{background:var(--blue2);border-left:4px solid var(--blue);padding:10px 12px;margin:10px 0;border-radius:4px}
+.instr,.note{color:var(--mute);margin:8px 0}
+.legend{margin:8px 0 12px;padding:8px 12px;background:#f7f9fc;border:1px solid var(--line);border-radius:6px;font-size:14px}
+.legend div{margin:2px 0}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;margin:7px 0;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:#fff}
+.opt:hover{border-color:var(--blue)}
+.opt input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--blue)}
+.opt.on{background:var(--blue2);border-color:var(--blue)}
+.opt.dis{opacity:.45;cursor:default}
+.scroll{overflow-x:auto;margin:10px 0}
+table.g{border-collapse:collapse;width:100%;min-width:420px;font-size:14px}
+table.g th{background:var(--navy);color:#fff;padding:8px 6px;font-weight:bold;text-align:center;vertical-align:bottom}
+table.g th.l{text-align:left}
+table.g.tg{min-width:0}
+table.g.tg th,table.g.tg td{padding-left:3px;padding-right:3px}
+table.g.tg td.l,table.g.tg th.l{padding-left:8px}
+table.g td{border-bottom:1px solid var(--line);padding:9px 6px;text-align:center}
+table.g td.l{text-align:left;padding-left:8px}
+table.g tr:nth-child(even) td{background:#f8fafd}
+table.g input{width:19px;height:19px;accent-color:var(--blue)}
+.hd{font-size:12px;color:var(--mute);font-weight:bold;letter-spacing:.04em;margin-top:10px}
+.def{position:relative;border-bottom:1px dotted var(--blue);cursor:help}
+.def .tip{display:none;position:absolute;left:0;top:100%;z-index:5;width:min(420px,80vw);background:#fff;border:1px solid var(--blue);border-radius:6px;padding:10px;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.15);font-weight:normal;text-align:left}
+.def:hover .tip,.def:focus .tip,.def.open .tip{display:block}
+.scale7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:14px 0}
+.scale7 label{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:10px 4px;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:13px;background:#fff}
+.scale7 label.on{background:var(--blue2);border-color:var(--blue)}
+.scale7 b{font-size:18px;color:var(--navy)}
+.scale7 input{position:absolute;opacity:0;pointer-events:none}
+.slw{margin:18px 0}.sl{width:100%;accent-color:var(--blue)}
+.sl{height:40px;cursor:pointer;margin:0}.sl.untouched{-webkit-appearance:none;appearance:none;background:linear-gradient(#d8dee9,#d8dee9) center/100% 6px no-repeat;outline-offset:2px}
+.sl.untouched::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;opacity:0}.sl.untouched::-moz-range-thumb{width:22px;height:22px;opacity:0;border:0}.sl.untouched::-moz-range-track{background:#d8dee9;height:6px}
+.ticks{display:flex;margin-top:8px}.ticks .tk{flex:1;text-align:center;padding:0 2px;font-size:12px;color:var(--mute)}.ticks .tk b{display:block;font-size:15px;color:var(--navy)}
+.slcap{margin:12px 0;font-weight:bold;min-height:22px}
+@media(max-width:640px){.ticks .tk{font-size:10px}}
+.fac{font-weight:bold;font-size:18px;margin:6px 0 2px}.facd{color:var(--mute);margin:0 0 6px}
+.cs{display:flex;gap:10px;align-items:center;margin:8px 0}
+.cs input{width:84px;padding:8px;font-size:16px;border:1px solid var(--line);border-radius:6px;text-align:right}
+.cs span.pts{color:var(--mute);width:42px}
+.tot{margin-top:12px;font-weight:bold;padding:10px 12px;border-radius:8px;background:#f7f9fc;border:1px solid var(--line)}
+.tot.ok{background:#e7f6ee;border-color:#9fd3b5}.tot.bad{background:#fdeceb;border-color:#f0b4b0}
+.txt{width:100%;padding:9px;border:1px solid var(--line);border-radius:6px;font-size:15px;margin-top:6px}
+.err{color:var(--bad);margin:12px 0 0;font-weight:bold;min-height:1.2em}
+.nav{display:flex;justify-content:flex-end;margin-top:14px}
+button.next{background:var(--blue);color:#fff;border:0;border-radius:8px;padding:12px 28px;font-size:16px;cursor:pointer}
+button.next:disabled{opacity:.5}
+.center{text-align:center;padding:40px 10px}
+.center h1{font-size:22px;color:var(--navy)}
+.lnk{background:none;border:0;color:var(--blue);text-decoration:underline;cursor:pointer;font-size:14px;padding:0;margin:4px 0}
+@media(max-width:640px){.scale7{grid-template-columns:1fr}.scale7 label{flex-direction:row;justify-content:flex-start;text-align:left}.card{padding:16px 14px}}
 </style>
 </head>
 <body>
-<div id="login" class="card login hide">
-  <h2>Fieldwork Console</h2>
-  <input id="em" type="email" placeholder="Email" autocomplete="username">
-  <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
-  <button class="p" id="go" style="width:100%">Sign in</button>
-  <div id="lmsg" class="msg bad"></div>
-</div>
 
-<div id="app" class="hide">
-<header><h1>Fieldwork Console</h1><span id="upd" class="mute" style="color:#b8c4dc"></span><button class="s" id="out">Sign out</button></header>
-<nav id="tabs"></nav>
-<main>
- <section id="t-dash"></section>
- <section id="t-qc" class="hide"></section>
- <section id="t-imp" class="hide"></section>
- <section id="t-cli" class="hide"></section>
- <section id="t-exp" class="hide"></section>
-</main>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<div class="bar"><i id="pb"></i></div>
+<div id="pvb" class="pv" style="display:none">Preview mode: answers are not saved and the link is not locked.</div>
+<main><div class="card" id="box"></div></main>
 <script>
+// Questionnaire spec.
+// Option format: [code, text, flags]  flags: T=terminate, X=exclusive, O=other-specify, F=fixed position (not randomized)
+const IMP7 = [[7,'Critical to our success'],[6,'Extremely important'],[5,'Very important'],[4,'Moderately important'],[3,'Somewhat important'],[2,'Slightly important'],[1,'Not relevant to our organization']];
+const TIME_COLS = ['NOW','IN 1 YEAR','IN 3 YEARS'];
+const WORKLOADS = ['Data lake(s)','Data warehouse','AI Tuning & Inferencing','Hybrid Transactional Analytical Processing (HTAP)','Online Transaction Processing (OLTP)'];
+const WL_DEFS = [
+ 'A data lake is a repository designed to store large volumes of structured, semi-structured, and unstructured data, often in its original or raw format. The data can then be used for analytics, data science, machine learning, and other processing workloads.',
+ 'A data warehouse is a data management environment designed primarily for querying, reporting, business intelligence, and analytics. It typically consolidates structured data from multiple sources and often maintains historical data for analysis over time.',
+ 'AI Tuning & Inferencing refers to the ability to optimize, deploy, and run AI models and agents using data managed within a database platform, enabling efficient model performance, real-time predictions and agentic AI interactions and decision making by the agents.',
+ 'Hybrid Transactional/Analytical Processing (HTAP) is an architecture that supports both online transaction processing (OLTP) and analytical processing (OLAP) within the same system or closely integrated environment, enabling analysis of operational data with less need to move it into a separate analytical system.',
+ 'Online Transaction Processing (OLTP) supports the high-volume, concurrent processing of operational transactions, such as purchases, orders, payments, reservations, account updates, or other real-time application activity. OLTP systems are optimized for fast, reliable inserts, updates, and retrieval of relatively small amounts of data per transaction.'
+];
+const CAPS = [
+ {key:'MMD',title:'Multi Model Data Services',
+  def:'A multi model data set of services that enable data to be pulled from a range of data engines for example from Oracle to Postgres or from transactional, analytic and/or AI data sets.',
+  def214:'A multi model data set of services that enable data to be pulled from a range of data engines for example from Oracle to Postgres or from transactional, analytic and/or AI data sets.',
+  items:['Integrated transactional data and enterprise database capabilities','Distributed High Availability — Resilient, highly available data services','Real-time analytical processing','Analytical data warehousing','Vector-based similarity search for AI']},
+ {key:'GOV',title:'Governance Services',
+  def:'A governance set of services embedded as a real time enforcement especially as agents are working. It also includes TDE keys and audit trails.',
+  def214:'A governance set of services embedded as a real time enforcement especially as agents are working. It also includes TDE keys and audit trails.',
+  items:['Real-time policy — Enforce policies as data and AI agents operate','Lineage — Track the origins and movement of data','Purpose-based agent access — Control agent access based on intended use','Audit — Record activity for accountability and compliance','TDE with customer-held keys — Protect encrypted data with organization-controlled keys']},
+ {key:'ART',title:'Agent Runtime Services',
+  def:'Agent runtimes services that enable agents to work in a sandbox with semantic search, model serving and pipelines.',
+  def214:'Agent runtimes that enable agents to work in a sandbox with semantic search, model serving and pipelines.',
+  items:['Agent sandbox — Provide isolated environments for agent execution','Memory — Maintain context and relevant information for agents','Semantic search — Retrieve information based on meaning','RAG pipelines — Ground AI responses in enterprise data','Model serving (GPU) — Deploy and execute AI models using GPU infrastructure']},
+ {key:'SCP',title:'Sovereign Control Plane',
+  def:'A sovereign control plane that enables you to forward deploy across your data estates with observability and provisioning where, when and how you need it (cloud, on premise or combinations).',
+  def214:'A sovereign control plane that enables you to forward deploy across your data estates with observability and provisioning where, when and how you need it (cloud, on premise or combinations).',
+  items:['Forward-deployable — Deploy services where required','Provisioning and lifecycle — Set up, update, and manage services','Backup, HA, DR — Support backup, high availability, and disaster recovery','Observability — Monitor service performance and operations','Multi-location federation — Coordinate services across locations','Air-gap image mirroring — Support deployment in isolated environments']}
+];
+const COUNTRIES = {US:'United States',UK:'UK',FR:'France',DE:'Germany',IT:'Italy',ES:'Spain',DK:'Denmark',NO:'Norway',SE:'Sweden',JP:'Japan',KR:'South Korea',AU:'Australia',IN:'India',SD:'Saudi/Dubai'};
+const COUNTRY_CODES = {US:1,UK:2,FR:3,DE:4,IT:5,ES:6,DK:7,NO:8,SE:9,JP:10,KR:11,AU:12,IN:13,SD:14};
+
+const SPEC = {
+ s1:{id:'S1',pre:'Please tell us a bit about the organization you work for.',
+  stem:'Approximately how many employees does your organization have worldwide? Your best estimate is fine. Select one.',
+  opts:[[1,'Less than 250','T'],[2,'250 to 499','T'],[3,'500 to 999'],[4,'1,000 to 2,499'],[5,'2,500 to 4,999'],[6,'5,000 or more']]},
+ s2:{id:'S2',stem:'In which industry does your organization mainly operate? Select one.',
+  opts:[[1,'Aerospace/Defense','T'],[2,'Advertising/Marketing/Market Research','T'],[3,'Automotive'],[4,'Banking/Financial Services'],[5,'Construction','T'],[6,'Education/Training','T'],[7,'Energy Production/Utilities, Oil & Gas'],[8,'Engineering/Design','T'],[9,'Food/Beverages/Restaurants','T'],[10,'Government – Federal/State/Local','T'],[11,'Hospitality/Leisure','T'],[12,'Insurance'],[13,'Legal Services','T'],[14,'Manufacturing/Industrial'],[15,'Medical/Health Care/Pharmaceuticals'],[16,'Medical/Technology'],[17,'Non-Profit/Trade Association','T'],[18,'Real Estate','T'],[19,'Retail/Wholesale/Supply Chain','T'],[20,'Technology (hardware, software, services)'],[21,'Telecommunications/Carriers'],[22,'Transport/Logistics']],
+  binf:[4,12]},
+ s3:{id:'S3',pre:'Next, we’d like to learn about your role in your organization.',
+  stem:'We are looking to talk to business professionals representing a wide range of job roles. Which best describes your role? Are you a…',
+  opts:[[1,'President/Chairman'],[2,'CEO'],[3,'CFO/COO'],[4,'CIO/CTO/CDO'],[5,'SVP/VP'],[6,'Managing Director/Director/Senior Manager'],[7,'Head of Department, Business Unit, or Product Line'],[8,'General or Middle Management'],[9,'Accounting/Finance/Procurement','T'],[10,'Professional Staff (non-technical)','T'],[11,'Technical/IT, Data or Engineering Management'],[12,'Technical/IT, Data or Engineering Staff'],[13,'Consultant','T'],[97,'Other (please specify)','T']],
+  csuite:[1,2,3,4]},
+ s4:{id:'S4',stem:'Which of the following describes your functional role(s)? Please select all that apply.',
+  opts:[[1,'Application/Software Development'],[2,'Cloud Infrastructure/Architecture'],[3,'Data Architecture/Infrastructure'],[4,'Data Engineering/Operations'],[5,'Data Management/Storage'],[6,'Data Analytics/Business Intelligence'],[7,'Data Science/AI/Machine Learning'],[8,'Data Strategy/Governance'],[9,'IT/Technology Operations'],[10,'DevOps/Automation'],[11,'Enterprise Architecture/Digital Transformation'],[12,'Other data-centric technology role'],[98,'None of these','XF']]},
+ s5:{id:'S5',pre:'Now, please think about the software platforms your organization uses to access, manage, and analyze data across its data estate.',
+  stem:'How, if at all, are you involved in selecting data infrastructure solutions? Select all that apply.',
+  opts:[[1,'Determine the purchasing needs, features, and/or technical requirements'],[2,'Evaluate solutions, vendors, and/or proposals'],[3,'Recommend brands, products and/or solutions'],[4,'Authorize and/or approve expenditures'],[98,'None of the above','XF']]},
+ s6:{id:'S6',stem:'How familiar, if at all, are you with your organization\'s data and AI strategy and supporting infrastructure? Select one.',
+  opts:[[5,'Extremely familiar'],[4,'Very familiar'],[3,'Somewhat familiar'],[2,'Slightly familiar','T'],[1,'Not at all familiar','T']]},
+ s7a:{id:'S7a',stem:'Which of the following data workloads does your organization currently use or plan to use?',
+  instr:'Hover over each to see a definition. (Select one answer per row)',
+  rows:WORKLOADS,defs:WL_DEFS,
+  cols:[[1,'Use Now'],[2,'Plan to Use'],[3,'Not Used/No Plans'],[99,'Not Sure']]},
+ s7b:{id:'S7b',stem:'Thinking of the different types of data workload(s) used, how is each currently managed?',
+  instr:'(If used in a hybrid setting, please select all that apply for each row.)',head:'DATA MANAGEMENT METHODS',
+  cols:[[1,'On premises'],[2,'Public Cloud'],[3,'Private Cloud'],[97,'Other'],[99,'Not Sure','X']]},
+ s7c:{id:'S7c',stem:'Which cloud providers does your organization use for each workload?',
+  instr:'(Please select all that apply for each row.)',
+  cols:[[1,'Microsoft Azure'],[2,'Google Cloud'],[3,'AWS'],[4,'National / Regional Cloud Supplier'],[97,'Other Cloud Provider'],[6,'No Preferred Provider','X'],[98,'No cloud provider – on premise only','X']]},
+ b1:{id:'B1',stemA:'Which of the following data software foundations and/or technologies does your organization currently use? (Select all that apply)',
+  stemB:'Select all that will be considered for future projects. (Select all that apply; include the current brand(s) if applicable)',
+  heads:['USE NOW','CONSIDER IN FUTURE'],
+  brands:[[1,'Apache'],[2,'ClickHouse'],[3,'Databricks'],[4,'Elastic'],[5,'IBM Db2'],[6,'Loop AI'],[7,'Microsoft SQL Server'],[8,'MongoDB'],[9,'MySQL'],[10,'Oracle'],[11,'PostgreSQL'],[12,'SAP Hana'],[13,'Snowflake'],[14,'SQLite']],
+  other:[15,'Other (specify)'],notsure:[99,'Not sure']},
+ intro:{text:'Our survey explores how organizations are evolving AI and data strategies, including technologies, infrastructure, and governance capabilities needed to support AI adoption, maintain control and achieve measurable business value. Thank you, in advance, for your thoughts on these topics.'},
+ q1:{id:'Q1',stem:'Below is a list of business functions where agentic AI may be in use. For each function, please indicate your organization’s current level of adoption within that function:',
+  legend:[[5,'Scaled production/mainstream use'],[4,'Limited production'],[3,'Pilot/testing'],[2,'Exploring/planning'],[1,'No plans']],
+  rows:['Cybersecurity & Fraud Detection','Predictive Analytics & Business Intelligence','Customer Engagement & Personalization','Sales & Customer Interaction','Finance & Expense Automation','Workplace Collaboration & Productivity','General Content Creation (written, audio, video)','Marketing & Campaign Optimization','Supply Chain & Operations Optimization','HR, Recruiting & Employee Development','IT Operations & DevOps','Product Design, Simulation & Prototyping (Digital Twins)','Code Generation & Software Development','Legal Document Analysis & Contract Management']},
+ q201:{id:'Q201',stem:'Thinking about your organization\'s use of agentic AI in each of the following business functions, what level of positive return or impact is your organization currently realizing? Please consider both financial returns and measurable business or operational benefits. Select one response for each function.',
+  legend:[[7,'Transformational positive impact'],[6,'Substantial positive impact'],[5,'Significant positive impact'],[4,'Moderate positive impact'],[3,'Modest positive impact'],[2,'Slight positive impact'],[1,'No positive impact yet']]},
+ q202:{id:'Q202',stem:'How important is the use of open-source technologies to your organization\'s strategy for achieving AI and data sovereignty? By data sovereignty, we refer to the organization’s ability to maintain control over where its data is stored, processed, and governed, in accordance with applicable laws, regulations, and organizational policies.',
+  opts:IMP7.map(o=>[o[0],o[1]])},
+ q203:{id:'Q203',stem:'Which of the following are the key reasons your organization believes open source is an important part of its AI and data strategy? Select your top 3.',
+  opts:[[1,'Avoid vendor lock-in – Reduce dependence on proprietary technology providers.'],[2,'Greater control – Maintain control over AI models, data, and infrastructure.'],[3,'Deployment flexibility – Run AI and data workloads across cloud, on-premises, and hybrid environments.'],[4,'Customization – Adapt technologies to specific business and technical requirements.'],[5,'Transparency and auditability – Gain visibility into underlying technology and how it operates.'],[6,'Cost optimization – Reduce licensing costs and improve long-term economics.'],[7,'Interoperability – Integrate technologies across different platforms and environments.'],[8,'Innovation and agility – Leverage community-driven development and emerging capabilities.'],[9,'Security and compliance – Independently assess and manage security and regulatory requirements.'],[98,'Open source is not part of our AI and data strategy.','XF'],[99,'Don’t know / Not sure.','XF']]},
+ q2:{id:'Q2',stem:'How critical is the marriage of AI models and organizational data to inform key business decisions for your organization\'s success?',
+  subs:[['Q2a','Today?'],['Q2b','How critical do you expect it to be 1 year from now?'],['Q2c','3 years from now?']],
+  note:'Please use a 7-point scale, where 1 means “Not relevant to our organization” and 7 means “Critical to our success.”',
+  opts:IMP7},
+ q3:{id:'Q3',stem:'Consider the following definition of Sovereign AI and Data:',
+  defn:'“Sovereign AI and Data” means maintaining control over all of your organization’s data and AI, including where it resides, how it is accessed, governed, and used to meet organizational and regulatory requirements across cloud(s) and/or on premises within each region.',
+  subs:[['Q3a','How important is achieving this level of control over AI and data to your organization today?'],['Q3b','1 year from now?'],['Q3c','3 years from now?']],
+  note:'Please use a 7-point scale, where 1 means “Not relevant to our organization” and 7 means “Critical to our success.”',
+  opts:IMP7},
+ q204:{id:'Q204',stem:'Compared with one year ago, has your organization\'s control over its AI systems and data become stronger or weaker? Select one.',
+  opts:[[5,'Much stronger'],[4,'Somewhat stronger'],[3,'About the same'],[2,'Somewhat weaker'],[1,'Much weaker']]},
+ q205:{id:'Q205',stem:'Looking ahead, to what extent does your organization need greater control over its AI systems and data than it has today? Select one.',
+  opts:[[3,'Significantly greater control'],[2,'Somewhat greater control'],[1,'No additional control needed'],[99,'Don’t know / Not sure']]},
+ q206:{id:'Q206',stem:'Thinking about your organization\'s AI and Data Sovereignty objectives, to what extent is each of the following a barrier or a driver to achieving them?',
+  note:'Please use a 7-point scale, where 1 means "Major barrier" and 7 means "Major driver."',
+  scale:[[7,'Major driver'],[6,'Moderate driver'],[5,'Minor driver'],[4,'Neither a barrier nor a driver'],[3,'Minor barrier'],[2,'Moderate barrier'],[1,'Major barrier']],
+  items:[['Data privacy, residency & jurisdiction','Requirements governing where data is stored, accessed, and used'],['AI governance & regulatory compliance','Requirements for AI oversight, auditability, and regulatory compliance'],['Cybersecurity & intellectual property protection','Protecting organizational data, AI models, and proprietary information'],['Geopolitical uncertainty & restrictions','Government policies or geopolitical developments affecting access to AI technologies'],['Provider dependence & vendor lock-in','Reliance on AI or cloud providers and limitations on switching platforms'],['Technology portability & interoperability','Ability to move data, models, agents, and workloads between platforms'],['Business continuity & operational resilience','Maintaining AI operations despite outages or service disruptions'],['Cost of AI and Data Sovereignty','Financial resources required to maintain control over AI systems and data'],['Internal AI expertise & capabilities','Skills and resources needed to deploy and manage AI independently'],['AI infrastructure & supply-chain availability','Access to computing infrastructure, AI hardware, and critical technologies']]},
+ q4:{id:'Q4',stem:'Consider the following definition of an AI & Data System:',
+  defn:'An AI and Data System integrates organizational data, analytics, and AI capabilities to support applications, business decisions, and customer experiences. One example is an Amazon-like business model.',
+  subs:[['Q4a','How important is the idea of having an AI & Data System in place inside your organization today?'],['Q4b','How about 1 year from now?'],['Q4c','And how about 3 years from now?']],
+  note:'Please use a 7-point scale, where 1 means “Not relevant to our organization” and 7 means “Critical to our success.”',
+  opts:IMP7},
+ q5:{id:'Q5',stem:'Thinking about the same statement on AI and Data Systems…',
+  defn:'An AI and Data System integrates organizational data, analytics, and AI capabilities to support applications, business decisions, and customer experiences. One example is an Amazon-like business model.',
+  subs:[['Q5a','How integrated are your organization\'s data, AI capabilities, and AI agents today?'],['Q5b','How about 1 year from now?'],['Q5c','And how about 3 years from now?']],
+  opts:[[1,'Fragmented – Data, AI capabilities, and agents primarily operate across separate systems, tools, or environments.'],[2,'Consolidating – We are actively bringing data, AI capabilities, and agents together, but significant fragmentation remains.'],[3,'Unified – Most data, AI capabilities, and agents operate within an integrated platform or environment.'],[4,'Embedded – Data, AI capabilities, and agents are deeply integrated into our technology environment and day-to-day business operations.'],[99,'Don’t know / Not sure']]},
+ q210:{id:'Q210',stem:'Which of the following best describes your organization’s current approach to AI and data systems? Select one.',
+  opts:[[4,'We have a comprehensive, integrated AI and data system in place across our organization.'],[3,'We are currently building a comprehensive, integrated AI and data system.'],[2,'We use multiple systems and components that collectively support our AI and data needs.'],[1,'We do not currently have an organization-wide AI and data system strategy.'],[99,'Don’t know / Not sure']]},
+ q211intro:{text:'Next, we will ask you about the importance of four capabilities that may or may not have an impact on your organization’s AI and data strategies.'},
+ q211:{id:'Q211',ords:['first','second','third','fourth'],
+  stem:'How important, if at all, is this capability to your organization’s AI and data strategies? Select one.',
+  opts:IMP7.map(o=>[o[0],o[1]])},
+ q212:{id:'Q212',stem:'Which of the following roles or technology components would benefit from enablement of this AI and data capability? Select all that apply.',
+  opts:[[1,'Chief Technology Officer (CTO)'],[2,'Chief Data Officer (CDO)'],[3,'Head of Data Infrastructure / VP Infrastructure'],[4,'AI Agent'],[5,'AI Agent-to-Agent (A2A)'],[6,'Model Context Protocol (MCP) Server'],[7,'Database Administrator (DBA)'],[8,'Application Developer'],[9,'Business Leader']]},
+ q213:{id:'Q213',stem:'Thinking about your organization’s AI and data strategy, how would you prioritize the importance of the following components that are a part of',
+  instr:'For this question, distribute 100 points across the capabilities based on their relative importance. Assign more points to those that matter most. You may assign zero points to capabilities that are not important.'},
+ q214:{id:'Q214',stem:'Which of the following best describes your organization’s current implementation of each of these four AI and data services? Select one response for each service.',
+  legend:[[5,'Fully in place'],[4,'Implementing'],[3,'Planning'],[2,'Exploring / considering'],[1,'No plans']]},
+ q8a:{id:'Q8a',pre:'Just a few more questions.',
+  stem:'Compared with one year ago, how much consideration does your organization give to energy requirements when making Data and AI Platform or AI Operating System infrastructure decisions? Select one.',
+  opts:[[6,'Much more consideration than one year ago'],[5,'Somewhat more consideration'],[4,'About the same consideration'],[3,'Somewhat less consideration'],[2,'Much less consideration'],[1,'Energy requirements are not a consideration for our organization'],[99,'Don’t know / Not sure']]},
+ q8b:{id:'Q8b',stem:'Which of the following energy-related factors are important when your organization makes AI and Data Infrastructure decisions? Select all that apply.',
+  opts:[[1,'Availability of sufficient power'],[2,'Reliability/resilience of the energy supply'],[3,'Cost of energy'],[4,'Energy efficiency'],[5,'Availability of renewable or low-carbon energy'],[6,'Carbon emissions/environmental impact'],[7,'Water and cooling requirements'],[8,'Ability to scale energy capacity as AI workloads grow'],[9,'Regulatory requirements'],[97,'None of these','XF'],[99,'Don’t know / Not sure','XF']]},
+ q8c:{id:'Q8c',stem:'When thinking of your organization’s data, which one of these statements best represents how you are organized now? Select one.',
+  opts:[[1,'All our data is increasingly being unified into one data platform so everybody and our agents can access it'],[2,'Our operational data and our analytics data are converging but it’s in its early stages'],[3,'Agents are increasingly shifting how we organize our data'],[4,'Our data is increasingly becoming a mission critical component to our success'],[99,'Don’t know / Not sure','F']]},
+ q8d:{id:'Q8d',stem:'AI and agents are increasingly important in the enterprise. Which one statement best describes your enterprise’s AI agent strategy? Select one.',
+  opts:[[1,'Organized as needed within departmental functions'],[2,'Organized departmental functions with clear measurements for success'],[3,'Corporate mandates and standards but no targets'],[4,'Corporate mandates and standards with specific targets'],[97,'None of these'],[99,'Don’t know / Not sure']]},
+ q9a:{id:'Q9a',stem:'How has the geopolitical and regulatory environment changed the importance of AI and Data Sovereignty to your organization over the past year? Select one.',
+  opts:[[1,'Made AI and Data Sovereignty much more important'],[2,'Made AI and Data Sovereignty somewhat more important'],[3,'Has not changed its importance'],[4,'Made AI and Data Sovereignty somewhat less important'],[5,'Made AI and Data Sovereignty much less important'],[6,'AI and Data Sovereignty is not relevant to our organization']]}
+};
+
 const SUPABASE_URL = "https://zgblrofsuwqekoygdsgf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_MUW3CI04Uot69ZG_H_aKzg_sK2idcb9";
-const POLL_MS = 45000;
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const $ = id => document.getElementById(id);
-function el(tag, text, cls){const e=document.createElement(tag); if(text!=null)e.textContent=text; if(cls)e.className=cls; return e;}
-function setMsg(node, text, cls){node.textContent=text; node.className='msg '+(cls||'');}
 
-/* ---------- CSV ---------- */
-function parseCSV(text){
-  text=text.replace(/^﻿/,''); const rows=[]; let row=[],f='',q=false;
-  for(let i=0;i<text.length;i++){const c=text[i];
-    if(q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i++;} else q=false; } else f+=c; }
-    else if(c==='"') q=true;
-    else if(c===','){row.push(f);f='';}
-    else if(c==='\n'||c==='\r'){ if(c==='\r'&&text[i+1]==='\n')i++; row.push(f);f=''; if(row.some(x=>x!==''))rows.push(row); row=[]; }
-    else f+=c; }
-  row.push(f); if(row.some(x=>x!==''))rows.push(row);
-  if(!rows.length) return [];
-  const h=rows[0].map(x=>x.trim());
-  return rows.slice(1).map(r=>{const o={}; h.forEach((k,i)=>{o[k]=(r[i]??'').trim();}); return o;});
-}
-function toCSV(rows){
-  const cols=[]; const seen=new Set();
-  rows.forEach(r=>Object.keys(r).forEach(k=>{if(!seen.has(k)){seen.add(k);cols.push(k);}}));
-  const esc=v=>{ if(v==null)return ''; if(Array.isArray(v))v=v.join('|'); else if(typeof v==='object')v=JSON.stringify(v); v=String(v); return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; };
-  return '﻿'+[cols.map(esc).join(',')].concat(rows.map(r=>cols.map(c=>esc(r[c])).join(','))).join('\r\n');
-}
-function download(name, text){const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'})); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);}
-const readFile = f => new Promise((res,rej)=>{const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsText(f);});
+/* ---------- helpers ---------- */
+const $ = (t,c,x)=>{const e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e;};
+const shuf = a=>{a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;};
+const hasF = o=>(o[2]||'').includes('F'), hasX = o=>(o[2]||'').includes('X'), hasT = o=>(o[2]||'').includes('T');
+function ordered(opts,rand){ if(!rand) return opts.slice(); return shuf(opts.filter(o=>!hasF(o))).concat(opts.filter(hasF)); }
+const box=document.getElementById('box');
 
-/* ---------- auth ---------- */
-async function boot(){
-  const {data}=await sb.auth.getSession();
-  if(data.session) await enter(); else show(false);
+/* ---------- link / mode ---------- */
+const qs=new URLSearchParams(location.search);
+const REF=(qs.get('ref')||'').trim().toUpperCase();
+const M=/^([A-Z]{2})(\d{3,8})$/.exec(REF);
+const PREVIEW=!!M && M[1]==='ZZ';
+const CC=M && COUNTRIES[M[1]] ? M[1] : (PREVIEW?'ZZ':null);
+const COUNTRY=PREVIEW?'Preview':(CC?COUNTRIES[CC]:null);
+const LOCKKEY='tmg_used_'+REF;
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+let DEVICE=lsGet('tmg_dev'); if(!DEVICE){DEVICE=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)); lsSet('tmg_dev',DEVICE);}
+
+/* ---------- data layer ---------- */
+async function post(path,body,opts){
+  const r=await fetch(SUPABASE_URL+path,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(body),keepalive:!!(opts&&opts.keepalive)});
+  return r;
 }
-function show(on){ $('login').classList.toggle('hide',on); $('app').classList.toggle('hide',!on); }
-$('go').onclick=async()=>{
-  setMsg($('lmsg'),'');
-  const {error}=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});
-  if(error) return setMsg($('lmsg'),error.message,'bad');
-  await enter();
-};
-$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click();});
-$('out').onclick=async()=>{await sb.auth.signOut(); clearInterval(timer); show(false);};
-let timer=null, started=false;
-async function enter(){
-  const {error}=await sb.rpc('internal_stats');
-  if(error){ await sb.auth.signOut(); show(false); return setMsg($('lmsg'),'This login is not authorised for the console.','bad'); }
-  show(true);
-  if(!started){ started=true; buildTabs(); buildDash(); buildQC(); buildImp(); buildCli(); buildExp(); }
-  refresh(); clearInterval(timer); timer=setInterval(()=>{ if(active==='dash') refresh(); },POLL_MS);
+function sendEvent(q){ if(PREVIEW||!REF) return; post('/rest/v1/survey_events',{ref:REF,q_id:q,country:COUNTRY},{keepalive:true}).catch(()=>{}); }
+async function refUsed(){
+  if(lsGet(LOCKKEY)) return true;
+  try{ const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/ref_used',{method:'POST',headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_ref:REF})}); if(r.ok){ return (await r.json())===true; } }catch(e){}
+  return false;
 }
 
-/* ---------- tabs ---------- */
-let active='dash';
-const TABS=[['dash','Dashboard'],['qc','QC'],['imp','Import'],['cli','Client sheet'],['exp','Export']];
-function buildTabs(){
-  const n=$('tabs'); n.textContent='';
-  TABS.forEach(([k,l])=>{const b=el('button',l); b.dataset.k=k; b.onclick=()=>go(k); n.appendChild(b);});
-  go('dash');
+/* ---------- state ---------- */
+const A={}; let flow=[], idx=-1, pg=0, cur=null, started=null, capOrder=[];
+const csuite=()=>A.IS_CSUITE===1;
+
+/* ---------- render pieces ---------- */
+function head(q){
+  if(q.pre) box.appendChild($('p','pre',q.pre));
+  if(q.stem) box.appendChild($('p','stem',q.stem));
+  if(q.defn) box.appendChild($('div','defn',q.defn));
+  (q.subs||[]).forEach(s=>box.appendChild($('p','sub',s[1])));
+  if(q.instr) box.appendChild($('p','instr',q.instr));
+  if(q.note) box.appendChild($('p','note',q.note));
 }
-function go(k){
-  active=k;
-  TABS.forEach(([t])=>$('t-'+t).classList.toggle('hide',t!==k));
-  [...$('tabs').children].forEach(b=>b.classList.toggle('on',b.dataset.k===k));
-  if(k==='dash')refresh(); if(k==='qc')loadFlagged(); if(k==='cli')loadDaily();
+function legendBox(leg){ const d=$('div','legend'); leg.forEach(l=>d.appendChild($('div',null,l[0]+' – '+l[1]))); box.appendChild(d); }
+
+function singleList(q,opts,id){
+  const wrap=$('div'); const name='r_'+id;
+  opts.forEach(o=>{ const lab=$('label','opt'); const inp=$('input'); inp.type='radio'; inp.name=name; inp.value=o[0]; lab.appendChild(inp); lab.appendChild($('span',null,o[1])); wrap.appendChild(lab);
+    inp.onchange=()=>wrap.querySelectorAll('.opt').forEach(l=>l.classList.toggle('on',l.querySelector('input').checked)); });
+  box.appendChild(wrap);
+  return ()=>{ const c=wrap.querySelector('input:checked'); return c?parseInt(c.value,10):null; };
+}
+function multiList(opts,id,o2){
+  o2=o2||{}; const wrap=$('div'); const inputs=[];
+  opts.forEach(o=>{ const lab=$('label','opt'); const inp=$('input'); inp.type='checkbox'; inp.value=o[0]; inp._x=hasX(o); lab.appendChild(inp); lab.appendChild($('span',null,o[1])); wrap.appendChild(lab); inputs.push(inp);
+    inp.onchange=()=>{
+      if(inp.checked){ if(inp._x) inputs.forEach(i=>{if(i!==inp)i.checked=false;}); else inputs.forEach(i=>{if(i._x)i.checked=false;}); }
+      if(o2.max){ const n=inputs.filter(i=>i.checked&&!i._x).length; inputs.forEach(i=>{ if(!i._x){ i.disabled=(n>=o2.max&&!i.checked); } else i.disabled=false; }); }
+      inputs.forEach(i=>{ i.parentNode.classList.toggle('on',i.checked); i.parentNode.classList.toggle('dis',i.disabled); });
+    }; });
+  box.appendChild(wrap);
+  return ()=>inputs.filter(i=>i.checked).map(i=>parseInt(i.value,10));
+}
+function matrix(o){ // o:{rows:[{k,label,def}],cols:[{v,label,x}],name,type,headFirst,showNum}
+  const sc=$('div','scroll'); const t=$('table','g'+(o.cols.every(c=>c.label==null)?' tg':'')); const thead=$('tr'); thead.appendChild($('th','l',o.headFirst||''));
+  o.cols.forEach(c=>thead.appendChild($('th',null,c.label!=null?c.label:String(c.v)))); t.appendChild(thead);
+  const cells={};
+  o.rows.forEach(r=>{ const tr=$('tr'); const td=$('td','l'); if(r.def){ const s=$('span','def',r.label); s.tabIndex=0; s.appendChild($('span','tip',r.def)); const tp=s.lastChild; const place=()=>{ tp.style.position='fixed'; const r=s.getBoundingClientRect(); const w=Math.min(420,window.innerWidth*0.8); tp.style.width=w+'px'; tp.style.left=Math.max(8,Math.min(r.left,window.innerWidth-w-8))+'px'; tp.style.display='block'; const h=tp.offsetHeight; tp.style.top=(r.bottom+h+8>window.innerHeight&&r.top>h+8?r.top-h-4:r.bottom+4)+'px'; }; s.addEventListener('mouseenter',place); s.addEventListener('focus',place); s.onclick=()=>{ s.classList.toggle('open'); place(); }; s.addEventListener('mouseleave',()=>{ if(!s.classList.contains('open')) tp.style.display=''; }); s.addEventListener('blur',()=>{ s.classList.remove('open'); tp.style.display=''; }); td.appendChild(s);} else td.appendChild($('span',null,r.label)); tr.appendChild(td);
+    cells[r.k]=[];
+    o.cols.forEach(c=>{ const d=$('td'); const inp=$('input'); inp.type=o.type==='check'?'checkbox':'radio'; if(o.type!=='check') inp.name=o.name+'_'+r.k; inp.value=c.v; inp._x=!!c.x; inp.setAttribute('aria-label',r.label+': '+(c.label!=null?c.label:c.v)); d.appendChild(inp); tr.appendChild(d); cells[r.k].push(inp);
+      if(o.type==='check') inp.onchange=()=>{ if(inp.checked){ cells[r.k].forEach(i=>{ if(i!==inp&&(inp._x||i._x)) i.checked=false; }); } }; });
+    t.appendChild(tr); });
+  sc.appendChild(t); box.appendChild(sc);
+  return {get:()=>{ const out={}; o.rows.forEach(r=>{ const sel=cells[r.k].filter(i=>i.checked).map(i=>parseInt(i.value,10)); out[r.k]=sel; }); return out; }};
+}
+function timeGrid(q,opts,id){ // options as rows, columns NOW / IN 1 YEAR / IN 3 YEARS, one answer per column
+  const sc=$('div','scroll'); const t=$('table','g tg'); const h=$('tr'); h.appendChild($('th','l','')); TIME_COLS.forEach(c=>h.appendChild($('th',null,c))); t.appendChild(h);
+  opts.forEach(o=>{ const tr=$('tr'); tr.appendChild($('td','l',o[1])); TIME_COLS.forEach((c,ci)=>{ const d=$('td'); const inp=$('input'); inp.type='radio'; inp.name=id+'_'+ci; inp.value=o[0]; inp.setAttribute('aria-label',o[1]+': '+c); d.appendChild(inp); tr.appendChild(d); }); t.appendChild(tr); });
+  sc.appendChild(t); box.appendChild(sc);
+  return ()=>TIME_COLS.map((c,ci)=>{ const x=t.querySelector('input[name="'+id+'_'+ci+'"]:checked'); return x?parseInt(x.value,10):null; });
 }
 
-/* ---------- dashboard ---------- */
-function buildDash(){
-  const s=$('t-dash'); s.textContent='';
-  const g=el('div',null,'grid'); g.id='kpis'; s.appendChild(g);
-  const c=el('div',null,'cols'); c.style.marginTop='16px';
-  [['by_source','Completes by source'],['by_country','Completes by country'],['daily','Completes by day'],['dropoff','Drop-off: last question reached (incompletes)']]
-   .forEach(([k,t])=>{const d=el('div',null,'card'); d.appendChild(el('h2',t)); const b=el('div'); b.id='b-'+k; d.appendChild(b); c.appendChild(d);});
-  s.appendChild(c);
-}
-function bars(id, arr){
-  const box=$(id); box.textContent='';
-  if(!arr||!arr.length){box.appendChild(el('div','No data yet','mute'));return;}
-  const max=Math.max(...arr.map(x=>x.n));
-  arr.forEach(x=>{const r=el('div',null,'bar'); r.appendChild(el('em',String(x.k))); const i=el('i'); i.style.width=Math.max(2,(x.n/max)*60)+'%'; r.appendChild(i); r.appendChild(el('span',String(x.n))); box.appendChild(r);});
-}
-async function refresh(){
-  const {data,error}=await sb.rpc('internal_stats');
-  if(error) return;
-  const k=$('kpis'); k.textContent='';
-  const qc=data.qc||{};
-  [['Completes',data.complete],['QC pass',qc.pass||0],['QC flagged',qc.flagged||0],['QC pending',qc.pending||0],['Removed',qc.removed||0],['Terminated',data.terminated],['Over quota',data.overquota],['Incompletes',data.incomplete]]
-   .forEach(([l,v])=>{const d=el('div',null,'kpi'); d.appendChild(el('b',String(v))); d.appendChild(el('span',l)); k.appendChild(d);});
-  ['by_source','by_country','daily','dropoff'].forEach(x=>bars('b-'+x,data[x]));
-  $('upd').textContent='Updated '+new Date().toLocaleTimeString();
+/* ---------- node builders ---------- */
+function infoNode(id,text,btn,pre){ return {id,mount:b=>{ if(pre)box.appendChild($('p','pre',pre)); box.appendChild($('p',null,text)); return {collect:()=>({vals:{}}),btn:btn}; }}; }
+function singleNode(q,fn,o){ o=o||{}; return {id:q.id,cond:o.cond,mount:()=>{ head(q); const opts=ordered(q.opts,o.rand); if(o.rand) A['RND_'+q.id]=opts.map(x=>x[0]).join(','); const get=singleList(q,opts,q.id);
+  return {collect:()=>{ const v=get(); if(v==null) return {err:'Please select one answer to continue.'}; const r={vals:{[q.id]:v}}; if(fn){ const e=fn(v,r); if(e) r.term=e; } return r; }}; }}; }
+function multiNode(q,fn,o){ o=o||{}; return {id:q.id,cond:o.cond,mount:()=>{ head(q); const opts=ordered(q.opts,o.rand); if(o.rand) A['RND_'+q.id]=opts.map(x=>x[0]).join(','); const get=multiList(opts,q.id,{max:o.max});
+  return {collect:()=>{ const sel=get(); if(!sel.length) return {err:'Please select at least one answer to continue.'};
+    if(o.exact){ const real=sel.filter(c=>!q.opts.find(x=>x[0]===c&&hasX(x))); if(real.length&&real.length!==o.exact) return {err:'Please select exactly '+o.exact+' answers.'}; }
+    const vals={}; q.opts.forEach(x=>vals[q.id+'_'+x[0]]=sel.includes(x[0])?1:0); const r={vals}; if(fn){ const e=fn(sel,r); if(e) r.term=e; } return r; }}; }}; }
+function gridTimeNode(q,id0){ return {id:q.id,mount:()=>{ head(q); const get=timeGrid(q,q.opts,q.id);
+  return {collect:()=>{ const v=get(); if(v.some(x=>x==null)) return {err:'Please answer in every column to continue.'}; const vals={}; q.subs.forEach((s,i)=>vals[s[0]]=v[i]); return {vals}; }}; }}; }
+
+function buildFlow(){
+  const F=[]; const S=SPEC;
+  F.push({id:'WELCOME',mount:()=>{ box.appendChild($('p','stem','Welcome')); box.appendChild($('p',null,'Thank you for taking part in this research study. Your responses are confidential and will be reported in aggregate only.')); return {collect:()=>{ started=new Date(); return {vals:{}}; },btn:'Start survey'}; }});
+  F.push(singleNode(S.s1,(v)=>hasT(S.s1.opts.find(o=>o[0]===v))?'S1: fewer than 500 employees':null));
+  F.push(singleNode(S.s2,(v,r)=>{ r.vals.IS_BINF=S.s2.binf.includes(v)?1:0; return hasT(S.s2.opts.find(o=>o[0]===v))?'S2: non-qualifying industry':null; }));
+  F.push(singleNode(S.s3,(v,r)=>{ r.vals.IS_CSUITE=S.s3.csuite.includes(v)?1:0; return hasT(S.s3.opts.find(o=>o[0]===v))?'S3: non-qualifying role':null; }));
+  F.push(multiNode(S.s4,(sel)=>sel.includes(98)?'S4: none of the functional roles':null,{cond:()=>!csuite()}));
+  F.push(multiNode(S.s5,(sel)=>(sel.includes(98)||(sel.length===1&&sel[0]===4))?'S5: not involved in selecting data infrastructure':null));
+  F.push(singleNode(S.s6,(v)=>v<=2?'S6: not familiar with data and AI strategy':null));
+  // S7a
+  F.push({id:'S7a',mount:()=>{ const q=S.s7a; head(q); const order=shuf(q.rows.map((r,i)=>i+1)); A.RND_S7a=order.join(',');
+    const m=matrix({rows:order.map(i=>({k:i,label:q.rows[i-1],def:q.defs[i-1]})),cols:q.cols.map(c=>({v:c[0],label:c[1]})),name:'s7a'});
+    return {collect:()=>{ const g=m.get(); if(order.some(i=>g[i].length!==1)) return {err:'Please select one answer in every row to continue.'}; const vals={}; order.forEach(i=>vals['S7a_'+i]=g[i][0]); const any=order.some(i=>g[i][0]===1); const r={vals}; if(!any) r.term='S7a: no workload currently used'; return r; }}; }});
+  const useNow=()=>(A.RND_S7a||'').split(',').filter(Boolean).map(Number).filter(i=>A['S7a_'+i]===1);
+  let ord7=null;
+  F.push({id:'S7b',mount:()=>{ const q=S.s7b; head(q); if(!ord7) ord7=shuf(useNow()); A.RND_S7b=ord7.join(','); box.appendChild($('div','hd',q.head));
+    const m=matrix({rows:ord7.map(i=>({k:i,label:S.s7a.rows[i-1]})),cols:q.cols.map(c=>({v:c[0],label:c[1],x:hasX(c)})),name:'s7b',type:'check'});
+    return {collect:()=>{ const g=m.get(); if(ord7.some(i=>!g[i].length)) return {err:'Please select at least one answer in every row to continue.'}; const vals={}; ord7.forEach(i=>q.cols.forEach(c=>vals['S7b_'+i+'_'+c[0]]=g[i].includes(c[0])?1:0)); return {vals}; }}; }});
+  F.push({id:'S7c',mount:()=>{ const q=S.s7c; head(q);
+    const m=matrix({rows:ord7.map(i=>({k:i,label:S.s7a.rows[i-1]})),cols:q.cols.map(c=>({v:c[0],label:c[1],x:hasX(c)})),name:'s7c',type:'check'});
+    return {collect:()=>{ const g=m.get(); if(ord7.some(i=>!g[i].length)) return {err:'Please select at least one answer in every row to continue.'}; const vals={}; ord7.forEach(i=>q.cols.forEach(c=>vals['S7c_'+i+'_'+c[0]]=g[i].includes(c[0])?1:0)); return {vals}; }}; }});
+  // B1
+  F.push({id:'B1',mount:()=>{ const q=S.b1; const order=shuf(q.brands.map(b=>b[0])); A.RND_B1=order.join(',');
+    box.appendChild($('p','stem',q.stemA)); box.appendChild($('p','stem',q.stemB));
+    const rows=order.map(k=>({k,label:q.brands.find(b=>b[0]===k)[1]})).concat([{k:q.other[0],label:q.other[1]},{k:q.notsure[0],label:q.notsure[1]}]);
+    const sc=$('div','scroll'); const t=$('table','g'); const h=$('tr'); h.appendChild($('th','l','')); q.heads.forEach(x=>h.appendChild($('th',null,x))); t.appendChild(h);
+    const cells={}; const txt={};
+    rows.forEach(r=>{ const tr=$('tr'); const td=$('td','l'); td.appendChild($('span',null,r.label)); if(r.k===q.other[0]){ const ti=$('input','txt'); ti.type='text'; ti.maxLength=200; ti.style.display='none'; ti.setAttribute('aria-label','Other (specify)'); td.appendChild(ti); txt[r.k]=ti; }
+      tr.appendChild(td); cells[r.k]=[0,1].map(ci=>{ const d=$('td'); const inp=$('input'); inp.type='checkbox'; inp.setAttribute('aria-label',r.label+': '+q.heads[ci]); d.appendChild(inp); tr.appendChild(d);
+        inp.onchange=()=>{ if(r.k===q.notsure[0]){ if(inp.checked) rows.forEach(o=>{ if(o.k!==r.k) cells[o.k][ci].checked=false; }); } else if(inp.checked) cells[q.notsure[0]][ci].checked=false;
+          const oc=cells[q.other[0]]; txt[q.other[0]].style.display=(oc[0].checked||oc[1].checked)?'block':'none'; }; return inp; }); t.appendChild(tr); });
+    sc.appendChild(t); box.appendChild(sc);
+    return {collect:()=>{ for(let ci=0;ci<2;ci++){ if(!rows.some(r=>cells[r.k][ci].checked)) return {err:'Please select at least one answer in each column to continue.'}; }
+      const oc=cells[q.other[0]]; if((oc[0].checked||oc[1].checked)&&!txt[q.other[0]].value.trim()) return {err:'Please specify the other technology.'};
+      const vals={}; rows.forEach(r=>{ vals['B1a_'+r.k]=cells[r.k][0].checked?1:0; vals['B1b_'+r.k]=cells[r.k][1].checked?1:0; });
+      vals['B1_'+q.other[0]+'_OTH']=(oc[0].checked||oc[1].checked)?txt[q.other[0]].value.trim():''; return {vals}; }}; }});
+  F.push(infoNode('INTRO',S.intro.text,'Continue'));
+  // Q1 (chunks of 5)
+  let q1ord=null;
+  F.push({id:'Q1',pages:()=>Math.ceil(S.q1.rows.length/5),mount:(b,p)=>{ const q=S.q1; if(!q1ord){ q1ord=shuf(q.rows.map((r,i)=>i+1)); A.RND_Q1=q1ord.join(','); } box.appendChild($('p','stem',q.stem)); legendBox(q.legend);
+    const list=q1ord.slice(p*5,p*5+5); const m=matrix({rows:list.map(i=>({k:i,label:q.rows[i-1]})),cols:q.legend.map(l=>({v:l[0]})),name:'q1p'+p});
+    return {collect:()=>{ const g=m.get(); if(list.some(i=>g[i].length!==1)) return {err:'Please select one answer in every row to continue.'}; const vals={}; list.forEach(i=>vals['Q1_'+i]=g[i][0]); return {vals}; }}; }});
+  // Q201 (chunks of 5, same order as Q1, only rows rated 5 or 4)
+  const q201list=()=>(q1ord||[]).filter(i=>A['Q1_'+i]>=4);
+  F.push({id:'Q201',cond:()=>q201list().length>0,pages:()=>Math.ceil(q201list().length/5),mount:(b,p)=>{ const q=S.q201; box.appendChild($('p','stem',q.stem)); legendBox(q.legend);
+    const list=q201list().slice(p*5,p*5+5); const m=matrix({rows:list.map(i=>({k:i,label:S.q1.rows[i-1]})),cols:q.legend.map(l=>({v:l[0]})),name:'q201p'+p});
+    return {collect:()=>{ const g=m.get(); if(list.some(i=>g[i].length!==1)) return {err:'Please select one answer in every row to continue.'}; const vals={}; list.forEach(i=>vals['Q201_'+i]=g[i][0]); return {vals}; }}; }});
+  F.push(singleNode(S.q202));
+  F.push(multiNode(S.q203,null,{rand:true,max:3,exact:3,cond:()=>A.Q202>=3}));
+  F.push(gridTimeNode(S.q2)); F.push(gridTimeNode(S.q3));
+  F.push(singleNode(S.q204)); F.push(singleNode(S.q205));
+  // Q206 one factor per screen
+  let q206ord=null;
+  F.push({id:'Q206',pages:()=>S.q206.items.length,mount:(b,p)=>{ const q=S.q206; if(!q206ord){ q206ord=shuf(q.items.map((x,i)=>i+1)); A.RND_Q206=q206ord.join(','); }
+    box.appendChild($('p','stem',q.stem)); box.appendChild($('p','note',q.note));
+    const i=q206ord[p]; const it=q.items[i-1]; box.appendChild($('div','fac',it[0])); box.appendChild($('p','facd',it[1]));
+    const g=$('div','slw'); const sl=$('input'); sl.type='range'; sl.min=1; sl.max=7; sl.step=1; sl.value=4; sl.className='sl untouched'; sl.setAttribute('aria-label',it[0]); let touched=false;
+    const mark=()=>{ touched=true; sl.classList.remove('untouched'); cap2.textContent=sl.value+' = '+(q.scale.find(s=>String(s[0])===sl.value)||[0,''])[1]; };
+    const tk=$('div','ticks'); q.scale.slice().sort((x,y)=>x[0]-y[0]).forEach(s=>{ const c=$('div','tk'); c.style.cursor='pointer'; c.onclick=()=>{ sl.value=String(s[0]); mark(); }; c.appendChild($('b',null,String(s[0]))); c.appendChild($('span',null,s[1])); tk.appendChild(c); });
+    const cap2=$('div','slcap','Move the slider to select your answer'); g.appendChild(sl); g.appendChild(tk); g.appendChild(cap2);
+    ['pointerup','input','change'].forEach(ev=>sl.addEventListener(ev,mark)); sl.addEventListener('keyup',e=>{ if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','PageUp','PageDown'].includes(e.key)) mark(); }); box.appendChild(g);
+    return {collect:()=>{ if(!touched) return {err:'Please select one answer to continue.'}; return {vals:{['Q206_'+i]:parseInt(sl.value,10)}}; }}; }});
+  F.push(gridTimeNode(S.q4)); F.push(gridTimeNode(S.q5));
+  F.push(singleNode(S.q210));
+  F.push(infoNode('Q211INTRO',S.q211intro.text,'Continue'));
+  // Q211-213 loop, randomized capability order
+  capOrder=shuf(CAPS.map(c=>c.key));
+  capOrder.forEach((key,n)=>{ const cap=CAPS.find(c=>c.key===key);
+    F.push({id:'Q211_'+key,mount:()=>{ A.RND_Q211=capOrder.join(','); box.appendChild($('p','stem','The '+S.q211.ords[n]+' one is:')); const d=$('div','defn'); d.appendChild($('b',null,cap.title)); d.appendChild($('div',null,cap.def)); box.appendChild(d); box.appendChild($('p','stem',S.q211.stem));
+      const get=singleList(S.q211,S.q211.opts,'q211'+key); return {collect:()=>{ const v=get(); if(v==null) return {err:'Please select one answer to continue.'}; return {vals:{['Q211_'+key]:v}}; }}; }});
+    F.push({id:'Q212_'+key,mount:()=>{ const d=$('div','defn'); d.appendChild($('b',null,cap.title)); box.appendChild(d); box.appendChild($('p','stem',S.q212.stem)); const get=multiList(S.q212.opts,'q212'+key);
+      return {collect:()=>{ const sel=get(); if(!sel.length) return {err:'Please select at least one answer to continue.'}; const vals={}; S.q212.opts.forEach(o=>vals['Q212_'+key+'_'+o[0]]=sel.includes(o[0])?1:0); return {vals}; }}; }});
+    F.push({id:'Q213_'+key,mount:()=>{ box.appendChild($('p','stem',S.q213.stem+' '+cap.title+'?')); box.appendChild($('p','instr',S.q213.instr));
+      const lk=$('button','lnk','View definition'); lk.type='button'; const dd=$('div','defn',cap.def); dd.style.display='none'; lk.onclick=()=>{ dd.style.display=dd.style.display==='none'?'block':'none'; }; box.appendChild(lk); box.appendChild(dd);
+      const inputs=[]; const wrap=$('div'); cap.items.forEach((txt,i)=>{ const row=$('div','cs'); const inp=$('input'); inp.type='number'; inp.min='0'; inp.max='100'; inp.step='1'; inp.inputMode='numeric'; inp.setAttribute('aria-label',txt); row.appendChild(inp); row.appendChild($('span','pts','points')); const sp=$('span'); const cut=txt.indexOf(' — '); if(cut>0){ sp.appendChild($('b',null,txt.slice(0,cut))); sp.appendChild(document.createTextNode(txt.slice(cut))); } else sp.textContent=txt; row.appendChild(sp); wrap.appendChild(row); inputs.push(inp); }); box.appendChild(wrap);
+      const tot=$('div','tot'); box.appendChild(tot);
+      const upd=()=>{ const s=inputs.reduce((a,i)=>a+(parseInt(i.value,10)||0),0); tot.textContent='TOTAL: '+s+' / 100 points'; tot.className='tot'+(s===100?' ok':(s>100?' bad':'')); return s; }; inputs.forEach(i=>i.oninput=upd); upd();
+      return {collect:()=>{ if(inputs.some(i=>i.value.trim()===''||!/^\d+$/.test(i.value.trim()))) return {err:'Please enter a whole number of points for every item (use 0 where not important).'}; const s=upd(); if(s!==100) return {err:'The points must add up to exactly 100. Your total is '+s+'.'}; const vals={}; inputs.forEach((i,k)=>vals['Q213_'+key+'_'+(k+1)]=parseInt(i.value,10)); return {vals}; }}; }});
+  });
+  // Q214
+  F.push({id:'Q214',mount:()=>{ const q=S.q214; box.appendChild($('p','stem',q.stem)); legendBox(q.legend); const order=shuf(CAPS.map(c=>c.key)); A.RND_Q214=order.join(',');
+    const m=matrix({rows:order.map(k=>({k,label:CAPS.find(c=>c.key===k).def214})),cols:q.legend.map(l=>({v:l[0]})),name:'q214'});
+    return {collect:()=>{ const g=m.get(); if(order.some(k=>g[k].length!==1)) return {err:'Please select one answer in every row to continue.'}; const vals={}; order.forEach(k=>vals['Q214_'+k]=g[k][0]); return {vals}; }}; }});
+  F.push(singleNode(S.q8a));
+  F.push(multiNode(S.q8b,null,{rand:true,cond:()=>A.Q8a>=2&&A.Q8a<=6}));
+  F.push(singleNode(S.q8c,null,{rand:true}));
+  F.push(singleNode(S.q8d)); F.push(singleNode(S.q9a));
+  return F;
 }
 
-/* ---------- QC ---------- */
-function buildQC(){
-  const s=$('t-qc'); s.textContent='';
-  const c=el('div',null,'card'); c.appendChild(el('h2','Quality control'));
-  const r=el('div',null,'row');
-  const sp=el('input'); sp.id='spd'; sp.type='number'; sp.step='0.05'; sp.value='0.4'; sp.style.width='80px';
-  r.appendChild(el('span','Speeder cut-off (fraction of median duration)'));
-  r.appendChild(sp);
-  const b=el('button','Run QC','p'); b.onclick=async()=>{
-    const {data,error}=await sb.rpc('qc_run',{p_speed_pct:parseFloat(sp.value)||0.4});
-    setMsg($('qcmsg'),error?error.message:`Done. Median ${Math.round(data.median_sec||0)}s, flagged ${data.flagged}, pass ${data.pass}.`,error?'bad':'ok');
-    loadFlagged();
-  };
-  r.appendChild(b); c.appendChild(r);
-  const m=el('div',null,'msg'); m.id='qcmsg'; c.appendChild(m);
-  c.appendChild(el('div','Checks now: speeders, duplicate email, IP and company across all sources. Straightlining is added once the codebook is final.','mute'));
-  s.appendChild(c);
-  const f=el('div',null,'card'); f.appendChild(el('h2','Flagged completes (latest 200)'));
-  const w=el('div',null,'scroll'); w.id='flagged'; f.appendChild(w); s.appendChild(f);
+/* ---------- engine ---------- */
+function setProgress(){ const vis=flow.filter(n=>!n.cond||n.cond()).length||1; const done=flow.slice(0,Math.max(idx,0)).filter(n=>!n.cond||n.cond()).length; document.getElementById('pb').style.width=Math.min(100,Math.round(done/vis*100))+'%'; }
+function render(){
+  box.innerHTML=''; const n=flow[idx]; cur=n.mount(box,pg); setProgress(); sendEvent(n.id+(n.pages&&n.pages()>1?'_p'+(pg+1):''));
+  const er=$('div','err'); er.id='err'; box.appendChild(er);
+  const nav=$('div','nav'); const b=$('button','next',cur.btn||'Next'); b.type='button'; b.onclick=next; nav.appendChild(b); box.appendChild(nav); window.scrollTo(0,0);
 }
-async function loadFlagged(){
-  const {data,error}=await sb.from('responses').select('resp_id,source,ext_id,country,duration_sec,qc_flags,qc_status').eq('qc_status','flagged').order('created_at',{ascending:false}).limit(200);
-  const w=$('flagged'); w.textContent='';
-  if(error) return w.appendChild(el('div',error.message,'bad'));
-  if(!data.length) return w.appendChild(el('div','Nothing flagged','mute'));
-  const t=el('table'); const h=el('tr'); ['Resp','Source','Ext ID','Country','Sec','Flags',''].forEach(x=>h.appendChild(el('th',x))); t.appendChild(h);
-  data.forEach(r=>{const tr=el('tr');
-    [r.resp_id.slice(0,8),r.source,r.ext_id||'',r.country||'',r.duration_sec??'',(r.qc_flags||[]).join(', ')].forEach(v=>tr.appendChild(el('td',String(v))));
-    const td=el('td');
-    const rm=el('button','Remove','s'); rm.onclick=()=>setQC(r.resp_id,'removed');
-    const ok=el('button','Clear','s'); ok.style.marginLeft='4px'; ok.onclick=()=>setQC(r.resp_id,'pass');
-    td.appendChild(rm); td.appendChild(ok); tr.appendChild(td); t.appendChild(tr);});
-  w.appendChild(t);
+function next(){ const r=cur.collect(); const er=document.getElementById('err'); if(r.err){ er.textContent=r.err; return; } Object.assign(A,r.vals||{}); if(r.term){ finish('terminated',r.term); return; }
+  const n=flow[idx]; if(pg+1<(n.pages?n.pages():1)){ pg++; render(); return; } advance(); }
+function advance(){ do{ idx++; }while(idx<flow.length && flow[idx].cond && !flow[idx].cond()); if(idx>=flow.length){ finish('complete'); return; } pg=0; render(); }
+function screen(h,p){ box.innerHTML=''; const d=$('div','center'); d.appendChild($('h1',null,h)); if(p) d.appendChild($('p',null,p)); box.appendChild(d); document.getElementById('pb').style.width='100%'; return d; }
+let FIN=false;
+async function finish(status,reason){
+  if(FIN) return; FIN=true;
+  screen('Please wait','Saving your responses...');
+  const now=new Date(); const payload={ref:REF,country:COUNTRY,is_csuite:A.IS_CSUITE==null?null:A.IS_CSUITE===1,is_binf:A.IS_BINF==null?null:A.IS_BINF===1,status:status,term_reason:reason||null,started_at:(started||now).toISOString(),completed_at:now.toISOString(),duration_sec:Math.round((now-(started||now))/1000),answers:Object.assign({},A,{COUNTRY:PREVIEW?0:COUNTRY_CODES[CC],DEVICE_ID:DEVICE})};
+  delete payload.answers.IS_CSUITE; delete payload.answers.IS_BINF; window.__PAYLOAD=payload;
+  if(!PREVIEW){ let ok=false, dup=false; for(let t=0;t<3&&!ok&&!dup;t++){ try{ const r=await post('/rest/v1/responses',payload); if(r.ok) ok=true; else if(r.status===409) dup=true; }catch(e){} if(!ok&&!dup) await new Promise(r=>setTimeout(r,1200)); }
+    if(dup){ lsSet(LOCKKEY,'1'); return screen('This link has already been used','Each survey link can only be used once.'); }
+    if(!ok&&status==='terminated'){ return screen('Thank you for your time','At this time, you don\'t qualify for this particular survey. Thank you for your time.'); }
+    if(!ok){ const d=screen('We could not save your responses','Please check your connection and try again.'); const b=$('button','next','Try again'); b.onclick=()=>{FIN=false;finish(status,reason);}; d.appendChild(b); return; }
+    lsSet(LOCKKEY,'1'); }
+  if(status==='complete') screen('Thank you','You have completed the survey. Your responses have been recorded.');
+  else screen('Thank you for your time','At this time, you don\'t qualify for this particular survey. Thank you for your time.');
 }
-async function setQC(id,status){ await sb.from('responses').update({qc_status:status}).eq('resp_id',id); loadFlagged(); }
-
-/* ---------- import ---------- */
-let batch=null;
-function buildImp(){
-  const s=$('t-imp'); s.textContent='';
-  const c=el('div',null,'card'); c.appendChild(el('h2','Import external file to staging'));
-  const r=el('div',null,'row');
-  const src=el('select'); src.id='isrc'; [['panel_a','Panel A'],['panel_b','Panel B'],['direct','Direct']].forEach(([v,l])=>{const o=el('option',l); o.value=v; src.appendChild(o);});
-  const f=el('input'); f.type='file'; f.accept='.csv'; f.id='ifile';
-  const b=el('button','Upload and validate','p'); b.id='iup';
-  r.appendChild(src); r.appendChild(f); r.appendChild(b); c.appendChild(r);
-  c.appendChild(el('div','CSV needs an ext_id column (vendor ID). Optional core columns: country, is_csuite, is_binf, duration_sec, email, ip, company. All other columns go into the answers. Files are remapped to codebook codes once the codebook is final.','mute'));
-  const m=el('div',null,'msg'); m.id='imsg'; c.appendChild(m);
-  const pr=el('div',null,'row'); pr.id='iprom'; pr.classList.add('hide');
-  const pb=el('button','Promote valid rows to master','p'); pb.id='ipb'; pr.appendChild(pb); c.appendChild(pr);
-  s.appendChild(c);
-  const rj=el('div',null,'card hide'); rj.id='irej'; rj.appendChild(el('h2','Rejected rows')); const w=el('div',null,'scroll'); w.id='irejw'; rj.appendChild(w); s.appendChild(rj);
-
-  b.onclick=async()=>{
-    const file=f.files[0]; if(!file) return setMsg(m,'Choose a CSV first','bad');
-    b.disabled=true; setMsg(m,'Reading file...');
-    try{
-      const rows=parseCSV(await readFile(file));
-      if(!rows.length) throw new Error('No rows found');
-      if(!('ext_id' in rows[0])) throw new Error('Column ext_id is missing');
-      batch=crypto.randomUUID();
-      const recs=rows.map(o=>({batch_id:batch,source:src.value,ext_id:o.ext_id||null,raw:o}));
-      for(let i=0;i<recs.length;i+=500){
-        setMsg(m,`Uploading ${Math.min(i+500,recs.length)} of ${recs.length}...`);
-        const {error}=await sb.from('staging').insert(recs.slice(i,i+500));
-        if(error) throw error;
-      }
-      const {data,error}=await sb.rpc('validate_staging',{p_batch:batch}); if(error) throw error;
-      setMsg(m,`Batch ${batch.slice(0,8)}: ${data.valid} valid, ${data.rejected} rejected.`,data.rejected?'warn':'ok');
-      pr.classList.toggle('hide',!data.valid); showRejected();
-    }catch(e){ setMsg(m,e.message||String(e),'bad'); }
-    b.disabled=false;
-  };
-  pb.onclick=async()=>{
-    if(!batch) return; pb.disabled=true;
-    const {data,error}=await sb.rpc('promote_staging',{p_batch:batch});
-    setMsg(m,error?error.message:`Promoted ${data} rows to master.`,error?'bad':'ok');
-    if(!error) pr.classList.add('hide'); pb.disabled=false;
-  };
-}
-async function showRejected(){
-  const {data}=await sb.from('staging').select('ext_id,source,reject_reason').eq('batch_id',batch).eq('status','rejected').limit(500);
-  const box=$('irej'), w=$('irejw'); w.textContent=''; box.classList.toggle('hide',!(data&&data.length));
-  if(!data||!data.length) return;
-  const t=el('table'); const h=el('tr'); ['Ext ID','Source','Reason'].forEach(x=>h.appendChild(el('th',x))); t.appendChild(h);
-  data.forEach(r=>{const tr=el('tr'); [r.ext_id||'',r.source,r.reject_reason||''].forEach(v=>tr.appendChild(el('td',v))); t.appendChild(tr);});
-  w.appendChild(t);
-}
-
-/* ---------- client daily sheet ---------- */
-function buildCli(){
-  const s=$('t-cli'); s.textContent='';
-  const c=el('div',null,'card'); c.appendChild(el('h2','End-of-day client sheet (post-QC completes)'));
-  const r=el('div',null,'row');
-  const cc=el('select'); cc.id='ccode'; const f=el('input'); f.type='file'; f.accept='.csv'; f.id='cfile';
-  const b=el('button','Upload to client portal','p');
-  r.appendChild(cc); r.appendChild(f); r.appendChild(b); c.appendChild(r);
-  c.appendChild(el('div','CSV columns: report_date (YYYY-MM-DD), qc_completes, quota_cell (optional). Re-uploading the same date and cell replaces the number. The client sees only this sheet.','mute'));
-  const m=el('div',null,'msg'); m.id='cmsg'; c.appendChild(m); s.appendChild(c);
-  const l=el('div',null,'card'); l.appendChild(el('h2','Latest uploaded rows')); const w=el('div',null,'scroll'); w.id='cdaily'; l.appendChild(w); s.appendChild(l);
-  b.onclick=async()=>{
-    const file=f.files[0]; if(!file) return setMsg(m,'Choose a CSV first','bad');
-    try{
-      const rows=parseCSV(await readFile(file)); if(!rows.length) throw new Error('No rows found');
-      const recs=rows.map((o,i)=>{
-        if(!/^\d{4}-\d{2}-\d{2}$/.test(o.report_date||'')) throw new Error(`Row ${i+2}: report_date must be YYYY-MM-DD`);
-        if(!/^\d+$/.test(o.qc_completes||'')) throw new Error(`Row ${i+2}: qc_completes must be a whole number`);
-        return {client_code:cc.value,report_date:o.report_date,quota_cell:o.quota_cell||'',qc_completes:parseInt(o.qc_completes,10)};
-      });
-      const {error}=await sb.from('client_daily_counts').upsert(recs,{onConflict:'client_code,report_date,quota_cell'});
-      if(error) throw error; setMsg(m,`Uploaded ${recs.length} rows.`,'ok'); loadDaily();
-    }catch(e){ setMsg(m,e.message||String(e),'bad'); }
-  };
-}
-async function loadDaily(){
-  const cc=$('ccode');
-  if(!cc.children.length){ const {data}=await sb.from('client_targets').select('client_code'); (data||[]).forEach(x=>{const o=el('option',x.client_code); o.value=x.client_code; cc.appendChild(o);}); }
-  const {data}=await sb.from('client_daily_counts').select('client_code,report_date,quota_cell,qc_completes').order('report_date',{ascending:false}).limit(100);
-  const w=$('cdaily'); w.textContent=''; if(!data||!data.length) return w.appendChild(el('div','Nothing uploaded yet','mute'));
-  const t=el('table'); const h=el('tr'); ['Client','Date','Cell','QC completes'].forEach(x=>h.appendChild(el('th',x))); t.appendChild(h);
-  data.forEach(r=>{const tr=el('tr'); [r.client_code,r.report_date,r.quota_cell,r.qc_completes].forEach(v=>tr.appendChild(el('td',String(v)))); t.appendChild(tr);});
-  w.appendChild(t);
-}
-
-/* ---------- export ---------- */
-function buildExp(){
-  const s=$('t-exp'); s.textContent='';
-  const c=el('div',null,'card'); c.appendChild(el('h2','Download data extract'));
-  c.appendChild(el('div','Wide format, one row per respondent, all sources pooled.','mute'));
-  const r=el('div',null,'row'); r.style.marginTop='10px';
-  const sel=el('select'); sel.id='estat'; [['all','All rows'],['complete','Completes only'],['pass','Completes, QC pass only']].forEach(([v,l])=>{const o=el('option',l); o.value=v; sel.appendChild(o);});
-  const b=el('button','Download CSV','p'); r.appendChild(sel); r.appendChild(b); c.appendChild(r);
-  const m=el('div',null,'msg'); c.appendChild(m); s.appendChild(c);
-  b.onclick=async()=>{
-    b.disabled=true; const all=[]; const L=1000;
-    try{
-      for(let o=0;;o+=L){
-        setMsg(m,`Fetching ${all.length} rows...`);
-        const {data,error}=await sb.rpc('export_wide',{p_offset:o,p_limit:L}); if(error) throw error;
-        all.push(...data); if(data.length<L) break;
-      }
-      let rows=all;
-      if(sel.value==='complete') rows=all.filter(r=>r.status==='complete');
-      if(sel.value==='pass') rows=all.filter(r=>r.status==='complete'&&r.qc_status==='pass');
-      download(`responses_${new Date().toISOString().slice(0,10)}.csv`,toCSV(rows));
-      setMsg(m,`Downloaded ${rows.length} rows.`,'ok');
-    }catch(e){ setMsg(m,e.message||String(e),'bad'); }
-    b.disabled=false;
-  };
-}
-boot();
+(async function init(){
+  if(PREVIEW) document.getElementById('pvb').style.display='block';
+  if(!M||!CC){ return screen('Invalid survey link','Please use the personal link you were sent.'); }
+  if(!PREVIEW && await refUsed()) return screen('This link has already been used','Each survey link can only be used once.');
+  flow=buildFlow(); idx=0; pg=0; render();
+})();
 </script>
 </body>
 </html>

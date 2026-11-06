@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Fieldwork Progress</title>
+<style>
+:root{--navy:#0b1f3a;--blue:#1f5fbf;--bg:#f4f6fa;--card:#fff;--line:#d8dee9;--text:#14213a;--mute:#5b6b85;--bad:#b3261e}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;background:var(--bg);color:var(--text)}
+header{background:var(--navy);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:16px}
+header h1{font-size:16px;margin:0;flex:1}
+main{padding:16px 20px 40px;max-width:1000px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:16px}
+.card h2{margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}
+.big{font-size:38px;font-weight:bold}.mute{color:var(--mute);font-size:12px}
+.track{height:18px;background:#e6ebf4;border-radius:9px;overflow:hidden;margin:10px 0 6px}
+.track i{display:block;height:100%;background:var(--blue)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--navy);color:#fff;text-align:left;padding:6px 8px}
+td{border-bottom:1px solid var(--line);padding:6px 8px}
+.scroll{max-height:340px;overflow:auto}
+button{padding:8px 14px;border-radius:6px;border:1px solid var(--blue);cursor:pointer;font-size:13px;background:var(--blue);color:#fff}
+button.s{background:#fff;color:var(--blue)}
+input{padding:8px;border:1px solid var(--line);border-radius:6px;font-size:13px;width:100%;margin-bottom:10px}
+.login{max-width:340px;margin:80px auto}.hide{display:none}.bad{color:var(--bad);margin-top:8px}
+svg text{font-size:10px;fill:#5b6b85}
+</style>
+</head>
+<body>
+<div id="login" class="card login hide">
+  <h2>Fieldwork Progress</h2>
+  <input id="em" type="email" placeholder="Email" autocomplete="username">
+  <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+  <button id="go" style="width:100%">Sign in</button>
+  <div id="lmsg" class="bad"></div>
+</div>
+<div id="app" class="hide">
+ <header><h1>Fieldwork Progress</h1><button class="s" id="ref">Refresh</button><button class="s" id="out">Sign out</button></header>
+ <main>
+  <div class="card"><h2>QC'd completes</h2><div class="big" id="tot">0</div><div class="mute" id="tgt"></div><div class="track"><i id="fill" style="width:0"></i></div><div class="mute" id="asof"></div></div>
+  <div class="card"><h2>Daily trend</h2><div id="chart"></div></div>
+  <div class="card hide" id="cellc"><h2>By cell</h2><div class="scroll" id="cells"></div></div>
+  <div class="card"><h2>Daily counts</h2><div class="scroll" id="daily"></div></div>
+ </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = "https://zgblrofsuwqekoygdsgf.supabase.co";
+const SUPABASE_KEY = "sb_publishable_MUW3CI04Uot69ZG_H_aKzg_sK2idcb9";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+function el(t,x){const e=document.createElement(t); if(x!=null)e.textContent=x; return e;}
+function show(on){$('login').classList.toggle('hide',on); $('app').classList.toggle('hide',!on);}
+$('go').onclick=async()=>{
+  $('lmsg').textContent='';
+  const {error}=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});
+  if(error) return $('lmsg').textContent=error.message;
+  load();
+};
+$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click();});
+$('out').onclick=async()=>{await sb.auth.signOut(); show(false);};
+$('ref').onclick=()=>load();
+
+function table(rows, heads){
+  const t=el('table'); const h=el('tr'); heads.forEach(x=>h.appendChild(el('th',x))); t.appendChild(h);
+  rows.forEach(r=>{const tr=el('tr'); r.forEach(v=>tr.appendChild(el('td',String(v)))); t.appendChild(tr);}); return t;
+}
+async function load(){
+  const [t,d]=await Promise.all([
+    sb.from('client_targets').select('client_name,target_n').limit(1),
+    sb.from('client_daily_counts').select('report_date,quota_cell,qc_completes').order('report_date',{ascending:true})
+  ]);
+  if(t.error||d.error||!t.data||!t.data.length){ await sb.auth.signOut(); show(false); $('lmsg').textContent='This login has no portal access.'; return; }
+  show(true);
+  const target=t.data[0].target_n, rows=d.data||[];
+  const total=rows.reduce((a,r)=>a+r.qc_completes,0);
+  $('tot').textContent=total.toLocaleString();
+  $('tgt').textContent=`of ${target.toLocaleString()} target (${Math.min(100,Math.round(total/target*100))}%)`;
+  $('fill').style.width=Math.min(100,total/target*100)+'%';
+  const byDate={}; rows.forEach(r=>{byDate[r.report_date]=(byDate[r.report_date]||0)+r.qc_completes;});
+  const dates=Object.keys(byDate).sort();
+  $('asof').textContent=dates.length?`Data as of ${dates[dates.length-1]}`:'No data uploaded yet';
+  // chart
+  const box=$('chart'); box.textContent='';
+  if(dates.length){
+    const W=900,H=200,pad=28,max=Math.max(...dates.map(x=>byDate[x]));
+    const bw=Math.max(4,(W-pad*2)/dates.length-4);
+    let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Daily QC'd completes">`;
+    dates.forEach((x,i)=>{const h=(byDate[x]/max)*(H-pad*2), xx=pad+i*((W-pad*2)/dates.length);
+      s+=`<rect x="${xx}" y="${H-pad-h}" width="${bw}" height="${h}" fill="#1f5fbf"></rect>`;
+      s+=`<text x="${xx+bw/2}" y="${H-pad-h-4}" text-anchor="middle">${byDate[x]}</text>`;
+      if(dates.length<=16||i%Math.ceil(dates.length/12)===0) s+=`<text x="${xx+bw/2}" y="${H-10}" text-anchor="middle">${x.slice(5)}</text>`;});
+    box.innerHTML=s+'</svg>';   // values are numbers and ISO dates validated at upload
+  } else box.appendChild(el('div','No data yet'));
+  // cells
+  const cells={}; rows.forEach(r=>{if(r.quota_cell) cells[r.quota_cell]=(cells[r.quota_cell]||0)+r.qc_completes;});
+  const ck=Object.keys(cells).sort();
+  $('cellc').classList.toggle('hide',!ck.length);
+  $('cells').textContent=''; if(ck.length) $('cells').appendChild(table(ck.map(k=>[k,cells[k]]),['Cell','QC\'d completes']));
+  // daily
+  $('daily').textContent='';
+  $('daily').appendChild(table(dates.slice().reverse().map(x=>[x,byDate[x]]),['Date','QC\'d completes']));
+}
+(async()=>{const {data}=await sb.auth.getSession(); if(data.session) load(); else show(false);})();
+</script>
+</body>
+</html>
