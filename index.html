@@ -41,7 +41,7 @@ table.g td.l{text-align:left;padding-left:8px}
 table.g tr:nth-child(even) td{background:#f8fafd}
 table.g input{width:19px;height:19px;accent-color:var(--blue)}
 .hd{font-size:12px;color:var(--mute);font-weight:bold;letter-spacing:.04em;margin-top:10px}
-.def{position:relative;border-bottom:1px dotted var(--blue);cursor:help}
+.def{font-weight:bold;position:relative;border-bottom:1px dotted var(--blue);cursor:help}
 .def .tip{display:none;position:absolute;left:0;top:100%;z-index:5;width:min(420px,80vw);background:#fff;border:1px solid var(--blue);border-radius:6px;padding:10px;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.15);font-weight:normal;text-align:left}
 .def:hover .tip,.def:focus .tip,.def.open .tip{display:block}
 .scale7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:14px 0}
@@ -50,12 +50,12 @@ table.g input{width:19px;height:19px;accent-color:var(--blue)}
 .scale7 b{font-size:18px;color:var(--navy)}
 .scale7 input{position:absolute;opacity:0;pointer-events:none}
 .slw{margin:18px 0}.sl{width:100%;accent-color:var(--blue)}
-.sl{height:40px;cursor:pointer;margin:0}.sl.untouched{-webkit-appearance:none;appearance:none;background:linear-gradient(#d8dee9,#d8dee9) center/100% 6px no-repeat;outline-offset:2px}
+.sl{height:40px;cursor:pointer;margin:0 calc(100%/14 - 10px);width:calc(100% - 100%/7 + 20px)}.sl.untouched{-webkit-appearance:none;appearance:none;background:linear-gradient(#d8dee9,#d8dee9) center/100% 6px no-repeat;outline-offset:2px}
 .sl.untouched::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;opacity:0}.sl.untouched::-moz-range-thumb{width:22px;height:22px;opacity:0;border:0}.sl.untouched::-moz-range-track{background:#d8dee9;height:6px}
 .ticks{display:flex;margin-top:8px}.ticks .tk{flex:1;text-align:center;padding:0 2px;font-size:12px;color:var(--mute)}.ticks .tk b{display:block;font-size:15px;color:var(--navy)}
 .slcap{margin:12px 0;font-weight:bold;min-height:22px}
 @media(max-width:640px){.ticks .tk{font-size:10px}}
-.fac{font-weight:bold;font-size:18px;margin:6px 0 2px}.facd{color:var(--mute);margin:0 0 6px}
+.fac{font-weight:bold;font-size:22px;text-align:center;color:var(--blue);margin:22px 0 4px}.facd{text-align:center;color:var(--text);font-size:16px;margin:0 0 12px}
 .cs{display:flex;gap:10px;align-items:center;margin:8px 0}
 .cs input{width:84px;padding:8px;font-size:16px;border:1px solid var(--line);border-radius:6px;text-align:right}
 .cs span.pts{color:var(--mute);width:42px}
@@ -81,7 +81,7 @@ button.next:disabled{opacity:.5}
 // Questionnaire spec.
 // Option format: [code, text, flags]  flags: T=terminate, X=exclusive, O=other-specify, F=fixed position (not randomized)
 const IMP7 = [[7,'Critical to our success'],[6,'Extremely important'],[5,'Very important'],[4,'Moderately important'],[3,'Somewhat important'],[2,'Slightly important'],[1,'Not relevant to our organization']];
-const TIME_COLS = ['NOW','IN 1 YEAR','IN 3 YEARS'];
+const TIME_COLS = ['TODAY','IN 1 YEAR','IN 3 YEARS'];
 const WORKLOADS = ['Data lake(s)','Data warehouse','AI Tuning & Inferencing','Hybrid Transactional Analytical Processing (HTAP)','Online Transaction Processing (OLTP)'];
 const WL_DEFS = [
  'A data lake is a repository designed to store large volumes of structured, semi-structured, and unstructured data, often in its original or raw format. The data can then be used for analytics, data science, machine learning, and other processing workloads.',
@@ -124,7 +124,7 @@ const SPEC = {
   csuite:[1,2,3,4]},
  s4:{id:'S4',stem:'Which of the following describes your functional role(s)? Please select all that apply.',
   opts:[[1,'Application/Software Development'],[2,'Cloud Infrastructure/Architecture'],[3,'Data Architecture/Infrastructure'],[4,'Data Engineering/Operations'],[5,'Data Management/Storage'],[6,'Data Analytics/Business Intelligence'],[7,'Data Science/AI/Machine Learning'],[8,'Data Strategy/Governance'],[9,'IT/Technology Operations'],[10,'DevOps/Automation'],[11,'Enterprise Architecture/Digital Transformation'],[12,'Other data-centric technology role'],[98,'None of these','XF']]},
- s5:{id:'S5',pre:'Now, please think about the software platforms your organization uses to access, manage, and analyze data across its data estate.',
+ s5:{id:'S5',pre:'Now, please think about the software platforms your organization uses to access, manage, and analyze data across its **data estate**.',
   stem:'How, if at all, are you involved in selecting data infrastructure solutions? Select all that apply.',
   opts:[[1,'Determine the purchasing needs, features, and/or technical requirements'],[2,'Evaluate solutions, vendors, and/or proposals'],[3,'Recommend brands, products and/or solutions'],[4,'Authorize and/or approve expenditures'],[98,'None of the above','XF']]},
  s6:{id:'S6',stem:'How familiar, if at all, are you with your organization\'s data and AI strategy and supporting infrastructure? Select one.',
@@ -156,30 +156,29 @@ const SPEC = {
   opts:[[1,'Avoid vendor lock-in – Reduce dependence on proprietary technology providers.'],[2,'Greater control – Maintain control over AI models, data, and infrastructure.'],[3,'Deployment flexibility – Run AI and data workloads across cloud, on-premises, and hybrid environments.'],[4,'Customization – Adapt technologies to specific business and technical requirements.'],[5,'Transparency and auditability – Gain visibility into underlying technology and how it operates.'],[6,'Cost optimization – Reduce licensing costs and improve long-term economics.'],[7,'Interoperability – Integrate technologies across different platforms and environments.'],[8,'Innovation and agility – Leverage community-driven development and emerging capabilities.'],[9,'Security and compliance – Independently assess and manage security and regulatory requirements.'],[98,'Open source is not part of our AI and data strategy.','XF'],[99,'Don’t know / Not sure.','XF']]},
  q2:{id:'Q2',stem:'How critical is the marriage of AI models and organizational data to inform key business decisions for your organization\'s success?',
   subs:[['Q2a','Today?'],['Q2b','How critical do you expect it to be 1 year from now?'],['Q2c','3 years from now?']],
-  note:'Please use a 7-point scale, where 1 means “Not relevant to our organization” and 7 means “Critical to our success.”',
+  note:'Please use a 7-point scale, where 1 means “Not relevant to our organization” and 7 means “Critical to our success.” Provide one response per column.',
   opts:IMP7},
  q3:{id:'Q3',stem:'Consider the following definition of Sovereign AI and Data:',
-  defn:'“Sovereign AI and Data” means maintaining control over all of your organization’s data and AI, including where it resides, how it is accessed, governed, and used to meet organizational and regulatory requirements across cloud(s) and/or on premises within each region.',
-  subs:[['Q3a','How important is achieving this level of control over AI and data to your organization today?'],['Q3b','1 year from now?'],['Q3c','3 years from now?']],
-  note:'Please use a 7-point scale, where 1 means “Not relevant to our organization” and 7 means “Critical to our success.”',
+  defn:'**“Sovereign AI and Data” means maintaining control over all of your organization’s data and AI, including where it resides, how it is accessed, governed, and used to meet organizational and regulatory requirements across cloud(s) and/or on premises within each region.**',
+  subs:[['Q3a','How important is achieving this level of control over AI and data to your organization **today**?'],['Q3b','**1 year** from now?'],['Q3c','**3 years** from now?']],
+  note:'Please use a 7-point scale, where 1 means “Not relevant to our organization” and 7 means “Critical to our success.” Provide one response per column.',
   opts:IMP7},
  q204:{id:'Q204',stem:'Compared with one year ago, has your organization\'s control over its AI systems and data become stronger or weaker? Select one.',
   opts:[[5,'Much stronger'],[4,'Somewhat stronger'],[3,'About the same'],[2,'Somewhat weaker'],[1,'Much weaker']]},
  q205:{id:'Q205',stem:'Looking ahead, to what extent does your organization need greater control over its AI systems and data than it has today? Select one.',
   opts:[[3,'Significantly greater control'],[2,'Somewhat greater control'],[1,'No additional control needed'],[99,'Don’t know / Not sure']]},
  q206:{id:'Q206',stem:'Thinking about your organization\'s AI and Data Sovereignty objectives, to what extent is each of the following a barrier or a driver to achieving them?',
-  note:'Please use a 7-point scale, where 1 means "Major barrier" and 7 means "Major driver."',
   scale:[[7,'Major driver'],[6,'Moderate driver'],[5,'Minor driver'],[4,'Neither a barrier nor a driver'],[3,'Minor barrier'],[2,'Moderate barrier'],[1,'Major barrier']],
   items:[['Data privacy, residency & jurisdiction','Requirements governing where data is stored, accessed, and used'],['AI governance & regulatory compliance','Requirements for AI oversight, auditability, and regulatory compliance'],['Cybersecurity & intellectual property protection','Protecting organizational data, AI models, and proprietary information'],['Geopolitical uncertainty & restrictions','Government policies or geopolitical developments affecting access to AI technologies'],['Provider dependence & vendor lock-in','Reliance on AI or cloud providers and limitations on switching platforms'],['Technology portability & interoperability','Ability to move data, models, agents, and workloads between platforms'],['Business continuity & operational resilience','Maintaining AI operations despite outages or service disruptions'],['Cost of AI and Data Sovereignty','Financial resources required to maintain control over AI systems and data'],['Internal AI expertise & capabilities','Skills and resources needed to deploy and manage AI independently'],['AI infrastructure & supply-chain availability','Access to computing infrastructure, AI hardware, and critical technologies']]},
  q4:{id:'Q4',stem:'Consider the following definition of an AI & Data System:',
-  defn:'An AI and Data System integrates organizational data, analytics, and AI capabilities to support applications, business decisions, and customer experiences. One example is an Amazon-like business model.',
+  defn:'**An AI and Data System integrates organizational data, analytics, and AI capabilities to support applications, business decisions, and customer experiences. One example is an Amazon-like business model.**',
   subs:[['Q4a','How important is the idea of having an AI & Data System in place inside your organization today?'],['Q4b','How about 1 year from now?'],['Q4c','And how about 3 years from now?']],
-  note:'Please use a 7-point scale, where 1 means “Not relevant to our organization” and 7 means “Critical to our success.”',
+  note:'Please use a 7-point scale, where 1 means “Not relevant to our organization” and 7 means “Critical to our success.” Provide one response per column.',
   opts:IMP7},
  q5:{id:'Q5',stem:'Thinking about the same statement on AI and Data Systems…',
-  defn:'An AI and Data System integrates organizational data, analytics, and AI capabilities to support applications, business decisions, and customer experiences. One example is an Amazon-like business model.',
-  subs:[['Q5a','How integrated are your organization\'s data, AI capabilities, and AI agents today?'],['Q5b','How about 1 year from now?'],['Q5c','And how about 3 years from now?']],
-  opts:[[1,'Fragmented – Data, AI capabilities, and agents primarily operate across separate systems, tools, or environments.'],[2,'Consolidating – We are actively bringing data, AI capabilities, and agents together, but significant fragmentation remains.'],[3,'Unified – Most data, AI capabilities, and agents operate within an integrated platform or environment.'],[4,'Embedded – Data, AI capabilities, and agents are deeply integrated into our technology environment and day-to-day business operations.'],[99,'Don’t know / Not sure']]},
+  defn:'**An AI and Data System integrates organizational data, analytics, and AI capabilities to support applications, business decisions, and customer experiences. One example is an Amazon-like business model. Provide one answer per column.**',
+  subs:[['Q5a','How integrated are your organization\'s data, AI capabilities, and AI agents today?'],['Q5b','How about **1 year from now**?'],['Q5c','And how about **3 years from now**?']],
+  opts:[[1,'**Fragmented** – Data, AI capabilities, and agents primarily operate across separate systems, tools, or environments.'],[2,'**Consolidating** – We are actively bringing data, AI capabilities, and agents together, but significant fragmentation remains.'],[3,'**Unified** – Most data, AI capabilities, and agents operate within an integrated platform or environment.'],[4,'**Embedded –** Data, AI capabilities, and agents are deeply integrated into our technology environment and day-to-day business operations.'],[99,'Don’t know / Not sure']]},
  q210:{id:'Q210',stem:'Which of the following best describes your organization’s current approach to AI and data systems? Select one.',
   opts:[[4,'We have a comprehensive, integrated AI and data system in place across our organization.'],[3,'We are currently building a comprehensive, integrated AI and data system.'],[2,'We use multiple systems and components that collectively support our AI and data needs.'],[1,'We do not currently have an organization-wide AI and data system strategy.'],[99,'Don’t know / Not sure']]},
  q211intro:{text:'Next, we will ask you about the importance of four capabilities that may or may not have an impact on your organization’s AI and data strategies.'},
@@ -189,7 +188,7 @@ const SPEC = {
  q212:{id:'Q212',stem:'Which of the following roles or technology components would benefit from enablement of this AI and data capability? Select all that apply.',
   opts:[[1,'Chief Technology Officer (CTO)'],[2,'Chief Data Officer (CDO)'],[3,'Head of Data Infrastructure / VP Infrastructure'],[4,'AI Agent'],[5,'AI Agent-to-Agent (A2A)'],[6,'Model Context Protocol (MCP) Server'],[7,'Database Administrator (DBA)'],[8,'Application Developer'],[9,'Business Leader']]},
  q213:{id:'Q213',stem:'Thinking about your organization’s AI and data strategy, how would you prioritize the importance of the following components that are a part of',
-  instr:'For this question, distribute 100 points across the capabilities based on their relative importance. Assign more points to those that matter most. You may assign zero points to capabilities that are not important.'},
+  instr:'For this question, distribute 100 points across the capabilities based on their relative importance. Assign more points to those that matter most. You may assign zero points to capabilities that are not important. Your best estimate is fine.'},
  q214:{id:'Q214',stem:'Which of the following best describes your organization’s current implementation of each of these four AI and data services? Select one response for each service.',
   legend:[[5,'Fully in place'],[4,'Implementing'],[3,'Planning'],[2,'Exploring / considering'],[1,'No plans']]},
  q8a:{id:'Q8a',pre:'Just a few more questions.',
@@ -209,7 +208,9 @@ const SUPABASE_URL = "https://zgblrofsuwqekoygdsgf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_MUW3CI04Uot69ZG_H_aKzg_sK2idcb9";
 
 /* ---------- helpers ---------- */
-const $ = (t,c,x)=>{const e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e;};
+const B214={MMD:'multi model data set',GOV:'governance set of services',ART:'Agent runtimes',SCP:'sovereign control plane'};
+const bdef=cap=>cap.def.replace(B214[cap.key],'**'+B214[cap.key]+'**');
+const $ = (t,c,x)=>{const e=document.createElement(t); if(c)e.className=c; if(x!=null){ if(typeof x==='string'&&x.indexOf('**')>=0){ x.split('**').forEach((s,i)=>{ if(!s)return; if(i%2){const b=document.createElement('b'); b.textContent=s; e.appendChild(b);} else e.appendChild(document.createTextNode(s)); }); } else e.textContent=x; } return e;};
 const shuf = a=>{a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;};
 const hasF = o=>(o[2]||'').includes('F'), hasX = o=>(o[2]||'').includes('X'), hasT = o=>(o[2]||'').includes('T');
 function ordered(opts,rand){ if(!rand) return opts.slice(); return shuf(opts.filter(o=>!hasF(o))).concat(opts.filter(hasF)); }
@@ -252,7 +253,7 @@ function head(q){
   if(q.instr) box.appendChild($('p','instr',q.instr));
   if(q.note) box.appendChild($('p','note',q.note));
 }
-function legendBox(leg){ const d=$('div','legend'); leg.forEach(l=>d.appendChild($('div',null,l[0]+' – '+l[1]))); box.appendChild(d); }
+function legendBox(leg){ const d=$('div','legend'); leg.forEach(l=>d.appendChild($('div',null,'**'+l[0]+' – '+l[1]+'**'))); box.appendChild(d); }
 
 function singleList(q,opts,id){
   const wrap=$('div'); const name='r_'+id;
@@ -276,7 +277,7 @@ function matrix(o){ // o:{rows:[{k,label,def}],cols:[{v,label,x}],name,type,head
   const sc=$('div','scroll'); const t=$('table','g'+(o.cols.every(c=>c.label==null)?' tg':'')); const thead=$('tr'); thead.appendChild($('th','l',o.headFirst||''));
   o.cols.forEach(c=>thead.appendChild($('th',null,c.label!=null?c.label:String(c.v)))); t.appendChild(thead);
   const cells={};
-  o.rows.forEach(r=>{ const tr=$('tr'); const td=$('td','l'); if(r.def){ const s=$('span','def',r.label); s.tabIndex=0; s.appendChild($('span','tip',r.def)); const tp=s.lastChild; const place=()=>{ tp.style.position='fixed'; const r=s.getBoundingClientRect(); const w=Math.min(420,window.innerWidth*0.8); tp.style.width=w+'px'; tp.style.left=Math.max(8,Math.min(r.left,window.innerWidth-w-8))+'px'; tp.style.display='block'; const h=tp.offsetHeight; tp.style.top=(r.bottom+h+8>window.innerHeight&&r.top>h+8?r.top-h-4:r.bottom+4)+'px'; }; s.addEventListener('mouseenter',place); s.addEventListener('focus',place); s.onclick=()=>{ s.classList.toggle('open'); place(); }; s.addEventListener('mouseleave',()=>{ if(!s.classList.contains('open')) tp.style.display=''; }); s.addEventListener('blur',()=>{ s.classList.remove('open'); tp.style.display=''; }); td.appendChild(s);} else td.appendChild($('span',null,r.label)); tr.appendChild(td);
+  o.rows.forEach(r=>{ const tr=$('tr'); const td=$('td','l'); if(r.def){ const s=$('span','def',r.label); s.tabIndex=0; s.appendChild($('span','tip',r.def)); const tp=s.lastChild; const place=()=>{ tp.style.position='fixed'; const r=s.getBoundingClientRect(); const w=Math.min(420,window.innerWidth*0.8); tp.style.width=w+'px'; tp.style.left=Math.max(8,Math.min(r.left,window.innerWidth-w-8))+'px'; tp.style.display='block'; const h=tp.offsetHeight; tp.style.top=(r.bottom+h+8>window.innerHeight&&r.top>h+8?r.top-h-4:r.bottom+4)+'px'; }; s.addEventListener('mouseenter',place); s.addEventListener('focus',place); s.onclick=()=>{ s.classList.toggle('open'); place(); }; s.addEventListener('mouseleave',()=>{ if(!s.classList.contains('open')) tp.style.display=''; }); s.addEventListener('blur',()=>{ s.classList.remove('open'); tp.style.display=''; }); td.appendChild(s);} else if(r.bold){ const sp=$('span'); const L=r.label, p=L.indexOf(r.bold); sp.appendChild(document.createTextNode(L.slice(0,p))); sp.appendChild($('b',null,r.bold)); sp.appendChild(document.createTextNode(L.slice(p+r.bold.length))); td.appendChild(sp); } else td.appendChild($('span',null,r.label)); tr.appendChild(td);
     cells[r.k]=[];
     o.cols.forEach(c=>{ const d=$('td'); const inp=$('input'); inp.type=o.type==='check'?'checkbox':'radio'; if(o.type!=='check') inp.name=o.name+'_'+r.k; inp.value=c.v; inp._x=!!c.x; inp.setAttribute('aria-label',r.label+': '+(c.label!=null?c.label:c.v)); d.appendChild(inp); tr.appendChild(d); cells[r.k].push(inp);
       if(o.type==='check') inp.onchange=()=>{ if(inp.checked){ cells[r.k].forEach(i=>{ if(i!==inp&&(inp._x||i._x)) i.checked=false; }); } }; });
@@ -316,12 +317,13 @@ function buildFlow(){
     const m=matrix({rows:order.map(i=>({k:i,label:q.rows[i-1],def:q.defs[i-1]})),cols:q.cols.map(c=>({v:c[0],label:c[1]})),name:'s7a'});
     return {collect:()=>{ const g=m.get(); if(order.some(i=>g[i].length!==1)) return {err:'Please select one answer in every row to continue.'}; const vals={}; order.forEach(i=>vals['S7a_'+i]=g[i][0]); const any=order.some(i=>g[i][0]===1); const r={vals}; if(!any) r.term='S7a: no workload currently used'; return r; }}; }});
   const useNow=()=>(A.RND_S7a||'').split(',').filter(Boolean).map(Number).filter(i=>A['S7a_'+i]===1);
-  let ord7=null;
-  F.push({id:'S7b',mount:()=>{ const q=S.s7b; head(q); if(!ord7) ord7=shuf(useNow()); A.RND_S7b=ord7.join(','); box.appendChild($('div','hd',q.head));
-    const m=matrix({rows:ord7.map(i=>({k:i,label:S.s7a.rows[i-1]})),cols:q.cols.map(c=>({v:c[0],label:c[1],x:hasX(c)})),name:'s7b',type:'check'});
+  let ord7=null, col7b=null, col7c=null;
+  const colOrd=(cols,tail)=>{ const head=shuf(cols.filter(c=>!tail.includes(c[0]))); return head.concat(tail.map(k=>cols.find(c=>c[0]===k)).filter(Boolean)); };
+  F.push({id:'S7b',mount:()=>{ const q=S.s7b; head(q); if(!ord7) ord7=shuf(useNow()); A.RND_S7b=ord7.join(','); if(!col7b){ col7b=colOrd(q.cols,[97,99]); } A.RND_S7b_COL=col7b.map(c=>c[0]).join(','); box.appendChild($('div','hd',q.head));
+    const m=matrix({rows:ord7.map(i=>({k:i,label:S.s7a.rows[i-1]})),cols:col7b.map(c=>({v:c[0],label:c[1],x:hasX(c)})),name:'s7b',type:'check'});
     return {collect:()=>{ const g=m.get(); if(ord7.some(i=>!g[i].length)) return {err:'Please select at least one answer in every row to continue.'}; const vals={}; ord7.forEach(i=>q.cols.forEach(c=>vals['S7b_'+i+'_'+c[0]]=g[i].includes(c[0])?1:0)); return {vals}; }}; }});
-  F.push({id:'S7c',mount:()=>{ const q=S.s7c; head(q);
-    const m=matrix({rows:ord7.map(i=>({k:i,label:S.s7a.rows[i-1]})),cols:q.cols.map(c=>({v:c[0],label:c[1],x:hasX(c)})),name:'s7c',type:'check'});
+  F.push({id:'S7c',mount:()=>{ const q=S.s7c; head(q); if(!col7c){ col7c=colOrd(q.cols,[97,6,98]); } A.RND_S7c_COL=col7c.map(c=>c[0]).join(',');
+    const m=matrix({rows:ord7.map(i=>({k:i,label:S.s7a.rows[i-1]})),cols:col7c.map(c=>({v:c[0],label:c[1],x:hasX(c)})),name:'s7c',type:'check'});
     return {collect:()=>{ const g=m.get(); if(ord7.some(i=>!g[i].length)) return {err:'Please select at least one answer in every row to continue.'}; const vals={}; ord7.forEach(i=>q.cols.forEach(c=>vals['S7c_'+i+'_'+c[0]]=g[i].includes(c[0])?1:0)); return {vals}; }}; }});
   // B1
   F.push({id:'B1',mount:()=>{ const q=S.b1; const order=shuf(q.brands.map(b=>b[0])); A.RND_B1=order.join(',');
@@ -356,13 +358,13 @@ function buildFlow(){
   // Q206 one factor per screen
   let q206ord=null;
   F.push({id:'Q206',pages:()=>S.q206.items.length,mount:(b,p)=>{ const q=S.q206; if(!q206ord){ q206ord=shuf(q.items.map((x,i)=>i+1)); A.RND_Q206=q206ord.join(','); }
-    box.appendChild($('p','stem',q.stem)); box.appendChild($('p','note',q.note));
+    box.appendChild($('p','stem',q.stem));
     const i=q206ord[p]; const it=q.items[i-1]; box.appendChild($('div','fac',it[0])); box.appendChild($('p','facd',it[1]));
     const g=$('div','slw'); const sl=$('input'); sl.type='range'; sl.min=1; sl.max=7; sl.step=1; sl.value=4; sl.className='sl untouched'; sl.setAttribute('aria-label',it[0]); let touched=false;
     const mark=()=>{ touched=true; sl.classList.remove('untouched'); cap2.textContent=sl.value+' = '+(q.scale.find(s=>String(s[0])===sl.value)||[0,''])[1]; };
     const tk=$('div','ticks'); q.scale.slice().sort((x,y)=>x[0]-y[0]).forEach(s=>{ const c=$('div','tk'); c.style.cursor='pointer'; c.onclick=()=>{ sl.value=String(s[0]); mark(); }; c.appendChild($('b',null,String(s[0]))); c.appendChild($('span',null,s[1])); tk.appendChild(c); });
-    const cap2=$('div','slcap','Move the slider to select your answer'); g.appendChild(sl); g.appendChild(tk); g.appendChild(cap2);
-    ['pointerup','input','change'].forEach(ev=>sl.addEventListener(ev,mark)); sl.addEventListener('keyup',e=>{ if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','PageUp','PageDown'].includes(e.key)) mark(); }); box.appendChild(g);
+    const cap2=$('div','slcap','Click a point on the scale to select your answer'); g.appendChild(sl); g.appendChild(tk); g.appendChild(cap2);
+    ['pointerup','input','change'].forEach(ev=>sl.addEventListener(ev,mark)); sl.addEventListener('keydown',e=>{ if(!touched&&(e.key===' '||e.key==='Spacebar')){ e.preventDefault(); mark(); } }); sl.addEventListener('keyup',e=>{ if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','PageUp','PageDown'].includes(e.key)) mark(); }); box.appendChild(g);
     return {collect:()=>{ if(!touched) return {err:'Please select one answer to continue.'}; return {vals:{['Q206_'+i]:parseInt(sl.value,10)}}; }}; }});
   F.push(gridTimeNode(S.q4)); F.push(gridTimeNode(S.q5));
   F.push(singleNode(S.q210));
@@ -370,20 +372,20 @@ function buildFlow(){
   // Q211-213 loop, randomized capability order
   capOrder=shuf(CAPS.map(c=>c.key));
   capOrder.forEach((key,n)=>{ const cap=CAPS.find(c=>c.key===key);
-    F.push({id:'Q211_'+key,mount:()=>{ A.RND_Q211=capOrder.join(','); box.appendChild($('p','stem','The '+S.q211.ords[n]+' one is:')); const d=$('div','defn'); d.appendChild($('b',null,cap.title)); d.appendChild($('div',null,cap.def)); box.appendChild(d); box.appendChild($('p','stem',S.q211.stem));
+    F.push({id:'Q211_'+key,mount:()=>{ A.RND_Q211=capOrder.join(','); box.appendChild($('p','stem','The '+S.q211.ords[n]+' capability is:')); const d=$('div','defn'); d.appendChild($('b',null,cap.title)); d.appendChild($('div',null,bdef(cap))); box.appendChild(d); box.appendChild($('p','stem',S.q211.stem));
       const get=singleList(S.q211,S.q211.opts,'q211'+key); return {collect:()=>{ const v=get(); if(v==null) return {err:'Please select one answer to continue.'}; return {vals:{['Q211_'+key]:v}}; }}; }});
-    F.push({id:'Q212_'+key,mount:()=>{ const d=$('div','defn'); d.appendChild($('b',null,cap.title)); box.appendChild(d); box.appendChild($('p','stem',S.q212.stem)); const get=multiList(S.q212.opts,'q212'+key);
+    F.push({id:'Q212_'+key,mount:()=>{ const d=$('div','defn'); d.appendChild($('b',null,cap.title)); d.appendChild($('div',null,bdef(cap))); box.appendChild(d); box.appendChild($('p','stem',S.q212.stem)); const get=multiList(S.q212.opts,'q212'+key);
       return {collect:()=>{ const sel=get(); if(!sel.length) return {err:'Please select at least one answer to continue.'}; const vals={}; S.q212.opts.forEach(o=>vals['Q212_'+key+'_'+o[0]]=sel.includes(o[0])?1:0); return {vals}; }}; }});
-    F.push({id:'Q213_'+key,mount:()=>{ box.appendChild($('p','stem',S.q213.stem+' '+cap.title+'?')); box.appendChild($('p','instr',S.q213.instr));
-      const lk=$('button','lnk','View definition'); lk.type='button'; const dd=$('div','defn',cap.def); dd.style.display='none'; lk.onclick=()=>{ dd.style.display=dd.style.display==='none'?'block':'none'; }; box.appendChild(lk); box.appendChild(dd);
-      const inputs=[]; const wrap=$('div'); cap.items.forEach((txt,i)=>{ const row=$('div','cs'); const inp=$('input'); inp.type='number'; inp.min='0'; inp.max='100'; inp.step='1'; inp.inputMode='numeric'; inp.setAttribute('aria-label',txt); row.appendChild(inp); row.appendChild($('span','pts','points')); const sp=$('span'); const cut=txt.indexOf(' — '); if(cut>0){ sp.appendChild($('b',null,txt.slice(0,cut))); sp.appendChild(document.createTextNode(txt.slice(cut))); } else sp.textContent=txt; row.appendChild(sp); wrap.appendChild(row); inputs.push(inp); }); box.appendChild(wrap);
+    F.push({id:'Q213_'+key,mount:()=>{ box.appendChild($('p','stem',S.q213.stem+' '+cap.title+'?')); const dd=$('div','defn'); dd.appendChild($('b',null,cap.title)); dd.appendChild($('div',null,bdef(cap))); box.appendChild(dd); box.appendChild($('p','instr',S.q213.instr));
+      const inputs=[]; const wrap=$('div'); cap.items.forEach((txt,i)=>{ const row=$('div','cs'); const inp=$('input'); inp.type='number'; inp.min='0'; inp.max='100'; inp.step='1'; inp.inputMode='numeric'; inp.setAttribute('aria-label',txt); row.appendChild(inp); row.appendChild($('span','pts','points')); const sp=$('span'); sp.textContent=txt; row.appendChild(sp); wrap.appendChild(row); inputs.push(inp); }); box.appendChild(wrap);
       const tot=$('div','tot'); box.appendChild(tot);
       const upd=()=>{ const s=inputs.reduce((a,i)=>a+(parseInt(i.value,10)||0),0); tot.textContent='TOTAL: '+s+' / 100 points'; tot.className='tot'+(s===100?' ok':(s>100?' bad':'')); return s; }; inputs.forEach(i=>i.oninput=upd); upd();
-      return {collect:()=>{ if(inputs.some(i=>i.value.trim()===''||!/^\d+$/.test(i.value.trim()))) return {err:'Please enter a whole number of points for every item (use 0 where not important).'}; const s=upd(); if(s!==100) return {err:'The points must add up to exactly 100. Your total is '+s+'.'}; const vals={}; inputs.forEach((i,k)=>vals['Q213_'+key+'_'+(k+1)]=parseInt(i.value,10)); return {vals}; }}; }});
+      return {collect:()=>{ if(inputs.some(i=>(i.validity&&i.validity.badInput)||(i.value.trim()!==''&&!/^\d+$/.test(i.value.trim())))) return {err:'Please enter whole numbers only.'}; const s=upd(); if(s!==100) return {err:'The points must add up to exactly 100. Your total is '+s+'.'}; const vals={}; inputs.forEach((i,k)=>vals['Q213_'+key+'_'+(k+1)]=i.value.trim()===''?0:parseInt(i.value,10)); return {vals}; }}; }});
   });
   // Q214
   F.push({id:'Q214',mount:()=>{ const q=S.q214; box.appendChild($('p','stem',q.stem)); legendBox(q.legend); const order=shuf(CAPS.map(c=>c.key)); A.RND_Q214=order.join(',');
-    const m=matrix({rows:order.map(k=>({k,label:CAPS.find(c=>c.key===k).def214})),cols:q.legend.map(l=>({v:l[0]})),name:'q214'});
+    
+    const m=matrix({rows:order.map(k=>({k,label:CAPS.find(c=>c.key===k).def214,bold:B214[k]})),cols:q.legend.map(l=>({v:l[0]})),name:'q214'});
     return {collect:()=>{ const g=m.get(); if(order.some(k=>g[k].length!==1)) return {err:'Please select one answer in every row to continue.'}; const vals={}; order.forEach(k=>vals['Q214_'+k]=g[k][0]); return {vals}; }}; }});
   F.push(singleNode(S.q8a));
   F.push(multiNode(S.q8b,null,{rand:true,cond:()=>A.Q8a>=2&&A.Q8a<=6}));
