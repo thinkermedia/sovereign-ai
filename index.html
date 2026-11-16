@@ -82,13 +82,13 @@ button.next:disabled{opacity:.5}
 // Option format: [code, text, flags]  flags: T=terminate, X=exclusive, O=other-specify, F=fixed position (not randomized)
 const IMP7 = [[7,'Critical to our success'],[6,'Extremely important'],[5,'Very important'],[4,'Moderately important'],[3,'Somewhat important'],[2,'Slightly important'],[1,'Not relevant to our organization']];
 const TIME_COLS = ['TODAY','IN 1 YEAR','IN 3 YEARS'];
-const WORKLOADS = ['Data lake(s)','Data warehouse','AI Tuning & Inferencing','Hybrid Transactional Analytical Processing (HTAP)','Online Transaction Processing (OLTP)'];
+const WORKLOADS = ['Data lake(s) or data warehouse','Online transactional processing (OLTP)','AI model tuning and production/inferencing','Agentic data sets','Analytic software (including real-time analytics)'];
 const WL_DEFS = [
- 'A data lake is a repository designed to store large volumes of structured, semi-structured, and unstructured data, often in its original or raw format. The data can then be used for analytics, data science, machine learning, and other processing workloads.',
- 'A data warehouse is a data management environment designed primarily for querying, reporting, business intelligence, and analytics. It typically consolidates structured data from multiple sources and often maintains historical data for analysis over time.',
- 'AI Tuning & Inferencing refers to the ability to optimize, deploy, and run AI models and agents using data managed within a database platform, enabling efficient model performance, real-time predictions and agentic AI interactions and decision making by the agents.',
- 'Hybrid Transactional/Analytical Processing (HTAP) is an architecture that supports both online transaction processing (OLTP) and analytical processing (OLAP) within the same system or closely integrated environment, enabling analysis of operational data with less need to move it into a separate analytical system.',
- 'Online Transaction Processing (OLTP) supports the high-volume, concurrent processing of operational transactions, such as purchases, orders, payments, reservations, account updates, or other real-time application activity. OLTP systems are optimized for fast, reliable inserts, updates, and retrieval of relatively small amounts of data per transaction.'
+ '**Data lakes or data warehouses**: Large shared data stores for analysis: raw in lakes, organized in warehouses.',
+ '**OLTP**: The databases that run the business: every order, payment and update, instantly.',
+ '**AI model tuning and production (inferencing):** Teaching a model your data, then running it live to answer requests.',
+ '**Agentic data sets**: The data AI agents read and act on, with permissions and audit.',
+ '**Analytic software, including real-time**: Software that turns data into answers, from reports to live, second-by-second insight.'
 ];
 const CAPS = [
  {key:'MMD',title:'Multi Model Data Services',
@@ -130,7 +130,7 @@ const SPEC = {
  s6:{id:'S6',stem:'How familiar, if at all, are you with your organization\'s data and AI strategy and supporting infrastructure? Select one.',
   opts:[[5,'Extremely familiar'],[4,'Very familiar'],[3,'Somewhat familiar'],[2,'Slightly familiar','T'],[1,'Not at all familiar','T']]},
  s7a:{id:'S7a',stem:'Which of the following data workloads does your organization currently use or plan to use?',
-  instr:'Hover over each to see a definition. (Select one answer per row)',
+  instr:'Hover over each to see a definition. Select one answer per row.',
   rows:WORKLOADS,defs:WL_DEFS,
   cols:[[1,'Use Now'],[2,'Plan to Use'],[3,'Not Used/No Plans'],[99,'Not Sure']]},
  s7b:{id:'S7b',stem:'Thinking of the different types of data workload(s) used, how is each currently managed?',
