@@ -218,7 +218,8 @@ const box=document.getElementById('box');
 
 /* ---------- link / mode ---------- */
 const qs=new URLSearchParams(location.search);
-const REF=(qs.get('ref')||'').trim().toUpperCase();
+const RAWREF=(qs.get('ref')||'').trim().toUpperCase(); const CPARAM=(qs.get('c')||'').trim().toUpperCase();
+const REF=(/^\d{3,8}$/.test(RAWREF)&&/^[A-Z]{2}$/.test(CPARAM))?CPARAM+RAWREF:RAWREF;
 const M=/^([A-Z]{2})(\d{3,8})$/.exec(REF);
 const PREVIEW=!!M && M[1]==='ZZ';
 const CC=M && COUNTRIES[M[1]] ? M[1] : (PREVIEW?'ZZ':null);
